@@ -1,7 +1,7 @@
 #include <catch2/catch.hpp>
 
 #include <string>
-#include "../src/Vec.hpp"
+#include "../src/Vec.h"
 
 using std::string;
 using namespace Simple;
