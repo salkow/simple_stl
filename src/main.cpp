@@ -152,4 +152,4 @@ void foo()
 	std::cout << my_vec[0].m_x << '\n';
 }
 
-int main() { iter(); }
+int main() { foo(); }

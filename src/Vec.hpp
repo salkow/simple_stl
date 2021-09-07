@@ -204,8 +204,9 @@ private:
 		for (size_type i = 0; i < m_capacity; i++)
 		{
 			new (&new_block[i]) T(std::move(m_elements[i]));
-			m_elements[i].~T();
 		}
+
+		internal_clear<T>();
 
 		::operator delete(m_elements, m_capacity * sizeof(T));
 
