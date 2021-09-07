@@ -105,14 +105,38 @@ public:
 	using size_type = std::size_t;
 
 	constexpr Vec(size_type capacity = DEFAULT_CAPACITY) :
-		m_capacity(capacity), m_elements(static_cast<T*>(::operator new(sizeof(T) * m_capacity)))
+		m_capacity(capacity), m_elements(static_cast<T*>(::operator new(sizeof(T) * capacity)))
 	{
+	}
+
+	Vec(Vec&& other) noexcept : m_capacity(0), m_elements(nullptr)
+	{
+		m_capacity = other.m_capacity;
+		m_elements = other.m_elements;
+		m_size = other.m_size;
+	}
+
+	Vec& operator=(Vec&& other) noexcept
+	{
+		m_capacity = other.m_capacity;
+		m_elements = other.m_elements;
+		m_size = other.m_size;
+
+		return *this;
 	}
 
 	~Vec()
 	{
 		clear();
 		::operator delete(m_elements, m_capacity * sizeof(T));
+	}
+
+	void swap(Vec& other) noexcept
+	{
+		using std::swap;
+		swap(m_capacity, other.m_capacity);
+		swap(m_size, other.m_size);
+		swap(m_elements, other.m_elements);
 	}
 
 	constexpr void push_back(const T& value)
