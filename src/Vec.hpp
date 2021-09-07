@@ -2,6 +2,7 @@
 #define VEC_HPP
 
 #include <stdexcept>
+#include <type_traits>
 
 namespace Simple
 {
@@ -172,9 +173,7 @@ public:
 
 	constexpr void clear()
 	{
-		for (size_type i = 0; i < m_size; i++)
-			m_elements[i].~T();
-
+		internal_clear<T>();
 		m_size = 0;
 	}
 
@@ -212,6 +211,20 @@ private:
 
 		m_elements = new_block;
 		m_capacity = new_capacity;
+	}
+
+	template <typename X>
+	typename std::enable_if<
+		!std::is_trivially_destructible<X>::value>::type constexpr internal_clear()
+	{
+		for (size_type i = 0; i < m_size; i++)
+			m_elements[i].~T();
+	}
+
+	template <typename X>
+	typename std::enable_if<
+		std::is_trivially_destructible<X>::value>::type constexpr internal_clear()
+	{
 	}
 
 	constexpr size_type get_increased_capacity() { return m_capacity + m_capacity / 2 + 1; }
