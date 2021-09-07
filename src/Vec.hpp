@@ -2,7 +2,6 @@
 #define VEC_HPP
 
 #include <stdexcept>
-#include <type_traits>
 
 namespace Simple
 {
