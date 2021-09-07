@@ -145,11 +145,10 @@ void iter()
 void foo();
 void foo()
 {
-	auto my_vec = Vec<Vector3>();
+	auto my_vec_1 = Vec<Vector3>();
+	my_vec_1.push_back(12);
 
-	my_vec.emplace_back(Vector3(3));
-
-	std::cout << my_vec[0].m_x << '\n';
+	auto my_vec_2 = std::move(my_vec_1);
 }
 
 int main() { foo(); }

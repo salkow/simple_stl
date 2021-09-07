@@ -1,8 +1,9 @@
 #ifndef VEC_HPP
 #define VEC_HPP
 
-#include <stdexcept>
 #include <type_traits>
+#include <stdexcept>
+#include <utility>
 
 namespace Simple
 {
@@ -109,19 +110,20 @@ public:
 	{
 	}
 
-	Vec(Vec&& other) noexcept : m_capacity(0), m_elements(nullptr)
-	{
-		m_capacity = other.m_capacity;
-		m_elements = other.m_elements;
-		m_size = other.m_size;
-	}
+	Vec(Vec&& other) noexcept { move(std::move(other)); }
 
 	Vec& operator=(Vec&& other) noexcept
 	{
-		m_capacity = other.m_capacity;
-		m_elements = other.m_elements;
-		m_size = other.m_size;
+		move(std::move(other));
 
+		return *this;
+	}
+
+	Vec(Vec const& other) : m_capacity(0), m_elements(nullptr) { copy(other); }
+
+	Vec& operator=(Vec const& other)
+	{
+		copy(other);
 		return *this;
 	}
 
@@ -236,6 +238,32 @@ private:
 
 		m_elements = new_block;
 		m_capacity = new_capacity;
+	}
+
+	constexpr void move(Vec&& other)
+	{
+		m_capacity = other.m_capacity;
+		m_elements = other.m_elements;
+		m_size = other.m_size;
+
+		other.m_capacity = 0;
+		other.m_elements = nullptr;
+		other.m_size = 0;
+	}
+
+	constexpr void copy(Vec const& other)
+	{
+		clear();
+		::operator delete(m_elements, m_capacity * sizeof(T));
+
+		m_capacity = other.m_capacity;
+		m_elements = static_cast<T*>(::operator new(sizeof(T) * m_capacity));
+		m_size = 0;
+
+		for (auto& elem : other)
+		{
+			push_back(elem);
+		}
 	}
 
 	template <typename X>

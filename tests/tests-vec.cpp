@@ -315,3 +315,45 @@ TEST_CASE("push_back, emplace_back", "[push_back_emplace_back]")
 		REQUIRE(my_vec.front() == "2, 3, 4");
 	}
 }
+
+TEST_CASE("move_copy_swap", "[move_copy_swap]")
+{
+	auto my_vec_1 = Vec<int>();
+	my_vec_1.push_back(10);
+	my_vec_1.push_back(100);
+	my_vec_1.push_back(1000);
+
+	Vec<int> my_vec_2;
+	my_vec_2 = my_vec_1;
+
+	my_vec_1.pop_back();
+
+	REQUIRE(my_vec_1.size() == 2);
+	REQUIRE(my_vec_2.size() == 3);
+
+	auto my_vec_3 = Vec<string>();
+	my_vec_3.push_back("10");
+	my_vec_3.push_back("100");
+	my_vec_3.push_back("1000");
+
+	auto my_vec_4 = my_vec_3;
+
+	my_vec_4.pop_back();
+
+	REQUIRE(my_vec_4.size() == 2);
+	REQUIRE(my_vec_3.size() == 3);
+
+	my_vec_3.swap(my_vec_4);
+
+	REQUIRE(my_vec_4.size() == 3);
+	REQUIRE(my_vec_3.size() == 2);
+
+	auto my_vec_5 = Vec<string>();
+	my_vec_5.push_back("10");
+	my_vec_5.push_back("100");
+	my_vec_5.push_back("1000");
+
+	auto my_vec_6 = std::move(my_vec_5);
+	REQUIRE(my_vec_6.size() == 3);
+	REQUIRE(my_vec_5.data() == nullptr);
+}
