@@ -267,9 +267,7 @@ private:
 		m_size = 0;
 
 		for (auto& elem : other)
-		{
 			push_back(elem);
-		}
 	}
 
 	template <typename X>
