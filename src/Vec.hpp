@@ -110,10 +110,13 @@ public:
 	{
 	}
 
-	Vec(Vec&& other) noexcept { move(std::move(other)); }
+	Vec(Vec&& other) noexcept : m_capacity(0), m_elements(nullptr) { move(std::move(other)); }
 
 	Vec& operator=(Vec&& other) noexcept
 	{
+		if (this == &other)
+			return *this;
+
 		move(std::move(other));
 
 		return *this;
@@ -123,6 +126,9 @@ public:
 
 	Vec& operator=(Vec const& other)
 	{
+		if (this == &other)
+			return *this;
+
 		copy(other);
 		return *this;
 	}
