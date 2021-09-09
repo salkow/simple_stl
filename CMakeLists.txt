@@ -15,10 +15,19 @@ add_compile_options(-Wall -Wextra -Wpedantic
          -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel
          -Wstrict-overflow=2 -Wswitch-default -Wundef -Wno-unused
 		 -g -Og)
+	 
+find_program(CLANG_TIDY_EXISTS "clang-tidy")
+IF(CLANG_TIDY_EXISTS)
+set(CMAKE_CXX_CLANG_TIDY
+  clang-tidy;
+  -header-filter=.*;
+  -use-color;)
+ENDIF()
 
 file(GLOB_RECURSE SOURCES src/*.cpp)
 add_executable(${TARGET} ${SOURCES})
 
+unset(CMAKE_CXX_CLANG_TIDY)
 
 set(TEST_TARGET "run_tests")
 
@@ -37,4 +46,3 @@ target_link_options(${TEST_TARGET} PRIVATE -fno-omit-frame-pointer -fsanitize=ad
 include(CTest)
 include(Catch)
 catch_discover_tests(${TEST_TARGET})
-

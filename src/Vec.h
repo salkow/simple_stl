@@ -1,9 +1,8 @@
 #ifndef VEC_H
 #define VEC_H
 
-#include <stdexcept>
+#include <algorithm>
 #include <type_traits>
-#include <utility>
 
 namespace Simple
 {
@@ -139,7 +138,7 @@ public:
 	~Vec()
 	{
 		clear();
-		::operator delete(m_elements, m_capacity * sizeof(T));
+		::operator delete(m_elements);
 	}
 
 	constexpr void swap(Vec& other) noexcept
@@ -153,7 +152,7 @@ public:
 	constexpr void push_back(const T& value)
 	{
 		if (m_size >= m_capacity)
-			realloc(get_increased_capacity());
+			reallocate(get_increased_capacity());
 
 		new (&m_elements[m_size]) T(value);
 
@@ -163,7 +162,7 @@ public:
 	constexpr void push_back(T&& value)
 	{
 		if (m_size >= m_capacity)
-			realloc(get_increased_capacity());
+			reallocate(get_increased_capacity());
 
 		new (&m_elements[m_size]) T(std::move(value));
 
@@ -174,7 +173,7 @@ public:
 	constexpr reference emplace_back(Args&&... args)
 	{
 		if (m_size >= m_capacity)
-			realloc(get_increased_capacity());
+			reallocate(get_increased_capacity());
 
 		new (&m_elements[m_size]) T(std::forward<Args>(args)...);
 
@@ -190,27 +189,17 @@ public:
 	constexpr reference operator[](size_type pos) { return m_elements[pos]; }
 	constexpr const_reference operator[](size_type pos) const { return m_elements[pos]; }
 
-	constexpr reference at(size_type pos)
-	{
-		if (pos >= m_size)
-			throw std::out_of_range("Index out of range");
-
-		return m_elements[pos];
-	}
-
-	constexpr const_reference at(size_type pos) const
-	{
-		if (pos >= m_size)
-			throw std::out_of_range("Index out of range");
-
-		return m_elements[pos];
-	}
-
 	constexpr void clear()
 	{
 		internal_clear<T>();
 		m_size = 0;
 	}
+
+	constexpr bool operator==(Vec const& other) const
+	{
+		return (size() == other.size()) && std::equal(begin(), end(), other.begin());
+	}
+	constexpr bool operator!=(Vec const& other) const { return !(*this == other); }
 
 	constexpr iterator begin() { return iterator(m_elements); }
 	constexpr const_iterator begin() const { return iterator(m_elements); }
@@ -232,18 +221,16 @@ public:
 	constexpr size_type empty() const { return m_size == 0; }
 
 private:
-	constexpr void realloc(size_type new_capacity)
+	constexpr void reallocate(size_type new_capacity)
 	{
-		auto new_block = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
+		auto* new_block = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
 
-		for (size_type i = 0; i < m_capacity; i++)
-		{
+		for (size_t i = 0; i < m_capacity; i++)
 			new (&new_block[i]) T(std::move(m_elements[i]));
-		}
 
 		internal_clear<T>();
 
-		::operator delete(m_elements, m_capacity * sizeof(T));
+		::operator delete(m_elements);
 
 		m_elements = new_block;
 		m_capacity = new_capacity;
@@ -263,7 +250,7 @@ private:
 	constexpr void copy(Vec const& other)
 	{
 		clear();
-		::operator delete(m_elements, m_capacity * sizeof(T));
+		::operator delete(m_elements);
 
 		m_capacity = other.m_capacity;
 		m_elements = static_cast<T*>(::operator new(sizeof(T) * m_capacity));

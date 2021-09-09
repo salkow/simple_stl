@@ -263,8 +263,6 @@ TEST_CASE("Iterator tests", "[iterator_vec]")
 
 		REQUIRE(value == "1");
 
-		REQUIRE(my_vec.at(1) == "2");
-
 		REQUIRE(my_vec.front() == "1");
 		REQUIRE(my_vec.back() == "4");
 
@@ -281,8 +279,6 @@ TEST_CASE("push_back, emplace_back", "[push_back_emplace_back]")
 		my_vec.push_back(111111);
 		my_vec.emplace_back(222222);
 		my_vec.push_back(333333);
-
-		REQUIRE(my_vec.at(1) == 222222);
 
 		my_vec.pop_back();
 
@@ -301,8 +297,6 @@ TEST_CASE("push_back, emplace_back", "[push_back_emplace_back]")
 		my_vec.push_back(string("111111111111111111111111111111111111111111111111"));
 		my_vec.emplace_back("22222222222222222222222222222222222222222222222222222222");
 		my_vec.push_back(string("33333333333333333333333333333333333333333333333333333333"));
-
-		REQUIRE(my_vec.at(1) == "22222222222222222222222222222222222222222222222222222222");
 
 		my_vec.pop_back();
 
@@ -326,7 +320,11 @@ TEST_CASE("move_copy_swap", "[move_copy_swap]")
 	Vec<int> my_vec_2;
 	my_vec_2 = my_vec_1;
 
+	REQUIRE(my_vec_1 == my_vec_2);
+
 	my_vec_1.pop_back();
+
+	REQUIRE(my_vec_1 != my_vec_2);
 
 	REQUIRE(my_vec_1.size() == 2);
 	REQUIRE(my_vec_2.size() == 3);
