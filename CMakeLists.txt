@@ -36,7 +36,6 @@ file(GLOB_RECURSE NO_MAIN_SOURCES src/*.cpp)
 list(REMOVE_ITEM NO_MAIN_SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp)
 
 find_package(Catch2 REQUIRED)
-
 add_executable(${TEST_TARGET} ${NO_MAIN_SOURCES} ${TEST_SOURCES})
 target_link_libraries(${TEST_TARGET} PRIVATE Catch2::Catch2)
 

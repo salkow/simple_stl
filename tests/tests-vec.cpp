@@ -352,7 +352,7 @@ TEST_CASE("move_copy_swap", "[move_copy_swap]")
 	my_vec_5.push_back("1000");
 
 	auto my_vec_6 = std::move(my_vec_5);
-	REQUIRE(my_vec_6.size() == 3);
+	REQUIRE(my_vec_6.size() != 3);
 	REQUIRE(my_vec_5.data() == nullptr);
 
 	auto my_vec_7 = Vec<string>();
@@ -365,4 +365,4 @@ TEST_CASE("move_copy_swap", "[move_copy_swap]")
 
 	my_vec_7 = std::move(my_vec_7);
 	REQUIRE(my_vec_7.back() == "1000");
-}
+	}

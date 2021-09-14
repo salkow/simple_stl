@@ -156,7 +156,7 @@ public:
 
 		new (&m_elements[m_size]) T(value);
 
-		m_size++;
+		++m_size;
 	}
 
 	constexpr void push_back(T&& value)
@@ -166,7 +166,7 @@ public:
 
 		new (&m_elements[m_size]) T(std::move(value));
 
-		m_size++;
+		++m_size;
 	}
 
 	template <typename... Args>
@@ -182,7 +182,7 @@ public:
 
 	constexpr void pop_back()
 	{
-		m_size--;
+		--m_size;
 		m_elements[m_size].~T();
 	}
 
