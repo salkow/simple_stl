@@ -236,13 +236,9 @@ private:
 
 	constexpr void move(vector&& other)
 	{
-		m_capacity = other.m_capacity;
-		m_elements = other.m_elements;
-		m_size = other.m_size;
-
-		other.m_capacity = 0;
-		other.m_elements = nullptr;
-		other.m_size = 0;
+		m_capacity = std::exchange(other.m_capacity, 0);
+		m_elements = std::exchange(other.m_elements, nullptr);
+		m_size = std::exchange(other.m_size, 0);
 	}
 
 	constexpr void copy(vector const& other)
