@@ -225,7 +225,7 @@ private:
 
 	template <typename X>
 	typename std::enable_if<!std::is_move_assignable<X>::value>::
-		type constexpr transfer_items_to_new_block(X* new_block)
+		type constexpr transfer_items_to_new_block(X* new_block) const
 	{
 		for (size_type i = 0; i < m_capacity; ++i)
 			new (&new_block[i]) T(m_elements[i]);
@@ -269,12 +269,12 @@ private:
 			m_elements[i].~T();
 	}
 
-	constexpr size_type get_increased_capacity()
+	constexpr size_type get_increased_capacity() const
 	{
 		return m_capacity * CAPACITY_INCREASE_FACTOR + 1;
 	}
 
-	constexpr T* allocate_new_T_block(size_type size)
+	constexpr T* allocate_new_T_block(size_type size) const
 	{
 		return static_cast<T*>(::operator new(sizeof(T) * size));
 	}
