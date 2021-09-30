@@ -8,6 +8,7 @@ namespace Simple
 {
 
 const std::size_t DEFAULT_CAPACITY = 2;
+constexpr float CAPACITY_INCREASE_FACTOR = 1.5;
 
 template <typename Vec>
 class VecIterator
@@ -116,9 +117,6 @@ public:
 
 	constexpr Vec& operator=(Vec&& other) noexcept
 	{
-		if (this == &other)
-			return *this;
-
 		move(std::move(other));
 
 		return *this;
@@ -274,10 +272,13 @@ private:
 	{
 	}
 
-	constexpr size_type get_increased_capacity() { return m_capacity + m_capacity / 2 + 1; }
+	constexpr size_type get_increased_capacity()
+	{
+		return m_capacity * CAPACITY_INCREASE_FACTOR + 1;
+	}
 
-	size_type m_capacity; // Available space for elements.
-	size_type m_size = 0; // Number of elements.
+	size_type m_capacity;
+	size_type m_size = 0;
 	T* m_elements;
 };
 
