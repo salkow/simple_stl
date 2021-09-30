@@ -161,7 +161,7 @@ public:
 	template <typename... Args>
 	constexpr reference emplace_back(Args&&... args)
 	{
-		if (m_size >= m_capacity)
+		if (m_size == m_capacity)
 			reallocate(get_increased_capacity());
 
 		new (&m_elements[m_size]) T(std::forward<Args>(args)...);
