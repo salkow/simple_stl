@@ -148,7 +148,7 @@ public:
 		tmp.m_capacity = new_cap;
 		tmp.m_size = m_size;
 
-		for (size_t i = 0; i < m_size; i++)
+		for (size_type i = 0; i < m_size; ++i)
 			new (&tmp.m_elements[i]) T(m_elements[i]);
 
 		swap(tmp);
@@ -221,7 +221,7 @@ private:
 	{
 		auto* new_block = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
 
-		for (size_t i = 0; i < m_capacity; i++)
+		for (size_type i = 0; i < m_capacity; ++i)
 			new (&new_block[i]) T(std::move(m_elements[i]));
 
 		internal_clear();
@@ -241,15 +241,18 @@ private:
 
 	constexpr void copy(vector const& other)
 	{
-		clear();
-		::operator delete(m_elements);
+		internal_clear();
 
-		m_capacity = other.m_capacity;
-		m_elements = static_cast<T*>(::operator new(sizeof(T) * m_capacity));
-		m_size = 0;
+		if (m_capacity < other.m_size)
+		{
+			::operator delete(m_elements);
+			m_elements = static_cast<T*>(::operator new(sizeof(T) * other.m_size));
+			m_capacity = other.m_size;
+		}
 
-		for (auto& elem : other)
-			emplace_back(elem);
+		m_size = other.m_size;
+		for (size_type i = 0; i < m_size; i++)
+			new (&m_elements[i]) T(other.m_elements[i]);
 	}
 
 	constexpr void internal_clear()

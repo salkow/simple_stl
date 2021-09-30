@@ -48,6 +48,7 @@ TEST_CASE("Non pointer tests", "[non_pointer_vec]")
 
 	my_vec_2.reserve(10);
 	REQUIRE(my_vec_2.capacity() == 10);
+	REQUIRE(my_vec_2[5] == 18);
 
 	my_vec_2.pop_back();
 	REQUIRE(my_vec_2.size() == 5);
@@ -73,6 +74,10 @@ TEST_CASE("Pointer tests", "[non_pointer_vec]")
 
 	REQUIRE(*(my_vec_1[0]) == 5);
 	REQUIRE(*(my_vec_1[1]) == 6);
+	REQUIRE(*(my_vec_1[2]) == 7);
+
+	my_vec_1.reserve(9);
+	REQUIRE(my_vec_1.capacity() == 9);
 	REQUIRE(*(my_vec_1[2]) == 7);
 
 	delete my_vec_1[1];
