@@ -4,11 +4,11 @@
 #include "../src/Vec.h"
 
 using std::string;
-using namespace Simple;
+using namespace simple;
 
 TEST_CASE("Non pointer tests", "[non_pointer_vec]")
 {
-	auto my_vec_1 = Vec<int>();
+	auto my_vec_1 = vector<int>();
 	my_vec_1.push_back(5);
 	my_vec_1.push_back(6);
 	my_vec_1.emplace_back(7);
@@ -33,7 +33,7 @@ TEST_CASE("Non pointer tests", "[non_pointer_vec]")
 
 	REQUIRE(my_vec_1.size() == 0);
 
-	auto my_vec_2 = Vec<int>(2);
+	auto my_vec_2 = vector<int>(2);
 	my_vec_2.push_back(15);
 	my_vec_2.push_back(16);
 	my_vec_2.push_back(17);
@@ -59,7 +59,7 @@ TEST_CASE("Non pointer tests", "[non_pointer_vec]")
 
 TEST_CASE("Pointer tests", "[non_pointer_vec]")
 {
-	auto my_vec_1 = Vec<int*>();
+	auto my_vec_1 = vector<int*>();
 	my_vec_1.push_back(new int(5));
 	my_vec_1.push_back(new int(6));
 	my_vec_1.emplace_back(new int(7));
@@ -92,7 +92,7 @@ TEST_CASE("Pointer tests", "[non_pointer_vec]")
 
 	REQUIRE(my_vec_1.size() == 0);
 
-	auto my_vec_2 = Vec<int*>(2);
+	auto my_vec_2 = vector<int*>(2);
 	my_vec_2.push_back(new int(15));
 	my_vec_2.push_back(new int(16));
 	my_vec_2.push_back(new int(17));
@@ -128,7 +128,7 @@ TEST_CASE("Pointer tests", "[non_pointer_vec]")
 TEST_CASE("Iterator tests", "[iterator_vec]")
 {
 	{
-		auto my_vec = Vec<int>();
+		auto my_vec = vector<int>();
 
 		REQUIRE(my_vec.begin() == my_vec.end());
 
@@ -165,7 +165,7 @@ TEST_CASE("Iterator tests", "[iterator_vec]")
 		REQUIRE(value == 5);
 
 		int counter = 0;
-		for (Vec<int>::iterator it = my_vec.begin(); it != my_vec.end(); it++)
+		for (vector<int>::iterator it = my_vec.begin(); it != my_vec.end(); it++)
 		{
 			counter++;
 		}
@@ -184,7 +184,7 @@ TEST_CASE("Iterator tests", "[iterator_vec]")
 	}
 
 	{
-		auto my_vec = Vec<string>();
+		auto my_vec = vector<string>();
 
 		REQUIRE(my_vec.begin() == my_vec.end());
 
@@ -220,7 +220,7 @@ TEST_CASE("Iterator tests", "[iterator_vec]")
 		REQUIRE(value == "5");
 
 		int counter = 0;
-		for (Vec<string>::iterator it = my_vec.begin(); it != my_vec.end(); it++)
+		for (vector<string>::iterator it = my_vec.begin(); it != my_vec.end(); it++)
 		{
 			counter++;
 		}
@@ -274,7 +274,7 @@ TEST_CASE("Iterator tests", "[iterator_vec]")
 TEST_CASE("push_back, emplace_back", "[push_back_emplace_back]")
 {
 	{
-		auto my_vec = Vec<int>();
+		auto my_vec = vector<int>();
 
 		my_vec.push_back(111111);
 		my_vec.emplace_back(222222);
@@ -292,7 +292,7 @@ TEST_CASE("push_back, emplace_back", "[push_back_emplace_back]")
 	}
 
 	{
-		auto my_vec = Vec<string>();
+		auto my_vec = vector<string>();
 
 		my_vec.push_back(string("111111111111111111111111111111111111111111111111"));
 		my_vec.emplace_back("22222222222222222222222222222222222222222222222222222222");
@@ -312,12 +312,12 @@ TEST_CASE("push_back, emplace_back", "[push_back_emplace_back]")
 
 TEST_CASE("move_copy_swap", "[move_copy_swap]")
 {
-	auto my_vec_1 = Vec<int>();
+	auto my_vec_1 = vector<int>();
 	my_vec_1.push_back(10);
 	my_vec_1.push_back(100);
 	my_vec_1.push_back(1000);
 
-	Vec<int> my_vec_2;
+	vector<int> my_vec_2;
 	my_vec_2 = my_vec_1;
 
 	REQUIRE(my_vec_1 == my_vec_2);
@@ -329,7 +329,7 @@ TEST_CASE("move_copy_swap", "[move_copy_swap]")
 	REQUIRE(my_vec_1.size() == 2);
 	REQUIRE(my_vec_2.size() == 3);
 
-	auto my_vec_3 = Vec<string>();
+	auto my_vec_3 = vector<string>();
 	my_vec_3.push_back("10");
 	my_vec_3.push_back("100");
 	my_vec_3.push_back("1000");
@@ -346,7 +346,7 @@ TEST_CASE("move_copy_swap", "[move_copy_swap]")
 	REQUIRE(my_vec_4.size() == 3);
 	REQUIRE(my_vec_3.size() == 2);
 
-	auto my_vec_5 = Vec<string>();
+	auto my_vec_5 = vector<string>();
 	my_vec_5.push_back("10");
 	my_vec_5.push_back("100");
 	my_vec_5.push_back("1000");
@@ -354,15 +354,4 @@ TEST_CASE("move_copy_swap", "[move_copy_swap]")
 	auto my_vec_6 = std::move(my_vec_5);
 	REQUIRE(my_vec_6.size() == 3);
 	REQUIRE(my_vec_5.data() == nullptr);
-
-	auto my_vec_7 = Vec<string>();
-	my_vec_7.push_back("10");
-	my_vec_7.push_back("100");
-	my_vec_7.push_back("1000");
-
-	my_vec_7 = my_vec_7;
-	REQUIRE(my_vec_7.front() == "10");
-
-	my_vec_7 = std::move(my_vec_7);
-	REQUIRE(my_vec_7.back() == "1000");
 }

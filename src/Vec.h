@@ -4,17 +4,17 @@
 #include <algorithm>
 #include <type_traits>
 
-namespace Simple
+namespace simple
 {
 
 const std::size_t DEFAULT_CAPACITY = 2;
 constexpr float CAPACITY_INCREASE_FACTOR = 1.5;
 
-template <typename Vec>
+template <typename vector>
 class VecIterator
 {
 public:
-	using value_type = typename Vec::value_type;
+	using value_type = typename vector::value_type;
 	using pointer = value_type*;
 	using reference = value_type&;
 	using const_reference = value_type const&;
@@ -93,7 +93,7 @@ private:
 };
 
 template <class T>
-class Vec
+class vector
 {
 public:
 	using value_type = T;
@@ -105,26 +105,26 @@ public:
 	using const_reference = value_type const&;
 	using size_type = std::size_t;
 
-	constexpr explicit Vec(size_type capacity = DEFAULT_CAPACITY) :
+	constexpr explicit vector(size_type capacity = DEFAULT_CAPACITY) :
 		m_capacity(capacity), m_elements(static_cast<T*>(::operator new(sizeof(T) * capacity)))
 	{
 	}
 
-	constexpr Vec(Vec&& other) noexcept : m_capacity(0), m_elements(nullptr)
+	constexpr vector(vector&& other) noexcept : m_capacity(0), m_elements(nullptr)
 	{
 		move(std::move(other));
 	}
 
-	constexpr Vec& operator=(Vec&& other) noexcept
+	constexpr vector& operator=(vector&& other) noexcept
 	{
 		move(std::move(other));
 
 		return *this;
 	}
 
-	constexpr Vec(Vec const& other) : m_capacity(0), m_elements(nullptr) { copy(other); }
+	constexpr vector(vector const& other) : m_capacity(0), m_elements(nullptr) { copy(other); }
 
-	constexpr Vec& operator=(Vec const& other)
+	constexpr vector& operator=(vector const& other)
 	{
 		if (this == &other)
 			return *this;
@@ -133,13 +133,13 @@ public:
 		return *this;
 	}
 
-	~Vec()
+	~vector()
 	{
 		clear();
 		::operator delete(m_elements);
 	}
 
-	constexpr void swap(Vec& other) noexcept
+	constexpr void swap(vector& other) noexcept
 	{
 		using std::swap;
 		swap(m_capacity, other.m_capacity);
@@ -193,11 +193,11 @@ public:
 		m_size = 0;
 	}
 
-	constexpr bool operator==(Vec const& other) const
+	constexpr bool operator==(vector const& other) const
 	{
 		return (size() == other.size()) && std::equal(begin(), end(), other.begin());
 	}
-	constexpr bool operator!=(Vec const& other) const { return !(*this == other); }
+	constexpr bool operator!=(vector const& other) const { return !(*this == other); }
 
 	constexpr iterator begin() { return iterator(m_elements); }
 	constexpr const_iterator begin() const { return iterator(m_elements); }
@@ -234,7 +234,7 @@ private:
 		m_capacity = new_capacity;
 	}
 
-	constexpr void move(Vec&& other)
+	constexpr void move(vector&& other)
 	{
 		m_capacity = other.m_capacity;
 		m_elements = other.m_elements;
@@ -245,7 +245,7 @@ private:
 		other.m_size = 0;
 	}
 
-	constexpr void copy(Vec const& other)
+	constexpr void copy(vector const& other)
 	{
 		clear();
 		::operator delete(m_elements);
@@ -274,6 +274,6 @@ private:
 	T* m_elements;
 };
 
-} // namespace Simple
+} // namespace simple
 
 #endif // VEC_HPP
