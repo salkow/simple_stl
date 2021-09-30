@@ -141,10 +141,9 @@ public:
 
 	constexpr void swap(vector& other) noexcept
 	{
-		using std::swap;
-		swap(m_capacity, other.m_capacity);
-		swap(m_size, other.m_size);
-		swap(m_elements, other.m_elements);
+		std::swap(m_capacity, other.m_capacity);
+		std::swap(m_size, other.m_size);
+		std::swap(m_elements, other.m_elements);
 	}
 
 	constexpr void push_back(const T& value)
