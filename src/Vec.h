@@ -146,25 +146,9 @@ public:
 		std::swap(m_elements, other.m_elements);
 	}
 
-	constexpr void push_back(const T& value)
-	{
-		if (m_size >= m_capacity)
-			reallocate(get_increased_capacity());
+	constexpr void push_back(const T& value) { emplace_back(value); }
 
-		new (&m_elements[m_size]) T(value);
-
-		++m_size;
-	}
-
-	constexpr void push_back(T&& value)
-	{
-		if (m_size >= m_capacity)
-			reallocate(get_increased_capacity());
-
-		new (&m_elements[m_size]) T(std::move(value));
-
-		++m_size;
-	}
+	constexpr void push_back(T&& value) { emplace_back(std::move(value)); }
 
 	template <typename... Args>
 	constexpr reference emplace_back(Args&&... args)
@@ -250,7 +234,7 @@ private:
 		m_size = 0;
 
 		for (auto& elem : other)
-			push_back(elem);
+			emplace_back(elem);
 	}
 
 	constexpr void internal_clear()
