@@ -106,10 +106,11 @@ public:
 
 	constexpr explicit vector() = default;
 
-	constexpr explicit vector(size_type num_of_elements)
+	constexpr explicit vector(size_type num_of_elements, const T& value = T())
 	{
+		reallocate(num_of_elements);
 		for (size_type i = 0; i < num_of_elements; ++i)
-			emplace_back();
+			emplace_back(value);
 	}
 
 	constexpr vector(vector&& other) noexcept { move(std::move(other)); }
@@ -143,15 +144,7 @@ public:
 		if (m_capacity >= new_cap)
 			return;
 
-		vector<T> tmp;
-		tmp.m_elements = static_cast<T*>(::operator new(sizeof(T) * new_cap));
-		tmp.m_capacity = new_cap;
-		tmp.m_size = m_size;
-
-		for (size_type i = 0; i < m_size; ++i)
-			new (&tmp.m_elements[i]) T(m_elements[i]);
-
-		swap(tmp);
+		reallocate(new_cap);
 	}
 
 	constexpr void swap(vector& other) noexcept
@@ -217,19 +210,33 @@ public:
 	constexpr size_type empty() const { return m_size == 0; }
 
 private:
-	constexpr void reallocate(size_type new_capacity)
+	constexpr void reallocate(size_type new_cap)
 	{
-		auto* new_block = static_cast<T*>(::operator new(new_capacity * sizeof(T)));
-
-		for (size_type i = 0; i < m_capacity; ++i)
-			new (&new_block[i]) T(std::move(m_elements[i]));
+		auto* new_block = allocate_new_T_block(new_cap);
+		transfer_items_to_new_block<T>(new_block);
 
 		internal_clear();
 
 		::operator delete(m_elements);
 
 		m_elements = new_block;
-		m_capacity = new_capacity;
+		m_capacity = new_cap;
+	}
+
+	template <typename X>
+	typename std::enable_if<!std::is_move_assignable<X>::value>::
+		type constexpr transfer_items_to_new_block(X* new_block)
+	{
+		for (size_type i = 0; i < m_capacity; ++i)
+			new (&new_block[i]) T(m_elements[i]);
+	}
+
+	template <typename X>
+	typename std::enable_if<
+		std::is_move_assignable<X>::value>::type constexpr transfer_items_to_new_block(X* new_block)
+	{
+		for (size_type i = 0; i < m_capacity; ++i)
+			new (&new_block[i]) T(std::move(m_elements[i]));
 	}
 
 	constexpr void move(vector&& other)
@@ -246,12 +253,13 @@ private:
 		if (m_capacity < other.m_size)
 		{
 			::operator delete(m_elements);
-			m_elements = static_cast<T*>(::operator new(sizeof(T) * other.m_size));
+			m_elements = allocate_new_T_block(other.m_size);
 			m_capacity = other.m_size;
 		}
 
 		m_size = other.m_size;
-		for (size_type i = 0; i < m_size; i++)
+
+		for (size_type i = 0; i < m_size; ++i)
 			new (&m_elements[i]) T(other.m_elements[i]);
 	}
 
@@ -264,6 +272,11 @@ private:
 	constexpr size_type get_increased_capacity()
 	{
 		return m_capacity * CAPACITY_INCREASE_FACTOR + 1;
+	}
+
+	constexpr T* allocate_new_T_block(size_type size)
+	{
+		return static_cast<T*>(::operator new(sizeof(T) * size));
 	}
 
 	size_type m_capacity = 0;

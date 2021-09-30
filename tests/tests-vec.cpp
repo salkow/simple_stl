@@ -60,6 +60,12 @@ TEST_CASE("Non pointer tests", "[non_pointer_vec]")
 	my_vec_2.clear();
 
 	REQUIRE(my_vec_2.size() == 0);
+
+	auto my_vec_3 = vector<int>(3, 5);
+	REQUIRE(my_vec_3.size() == 3);
+	REQUIRE(my_vec_3[0] == 5);
+	REQUIRE(my_vec_3[1] == 5);
+	REQUIRE(my_vec_3[2] == 5);
 }
 
 TEST_CASE("Pointer tests", "[non_pointer_vec]")
