@@ -8,66 +8,68 @@ namespace simple
 {
 
 constexpr float CAPACITY_INCREASE_FACTOR = 1.5;
+using size_type = std::size_t;
 
-template <typename vector>
-class VecIterator
+template <typename T>
+class vector_iterator
 {
 public:
-	using value_type = typename vector::value_type;
+	using difference_type = T;
+	using value_type = T;
 	using pointer = value_type*;
 	using reference = value_type&;
 	using const_reference = value_type const&;
-	using size_type = std::size_t;
+	using iterator_category = std::forward_iterator_tag;
 
-	constexpr explicit VecIterator(pointer ptr) : m_ptr(ptr) {}
+	constexpr explicit vector_iterator(pointer ptr) : m_ptr(ptr) {}
 
-	constexpr VecIterator& operator++()
+	constexpr vector_iterator& operator++()
 	{
 		m_ptr++;
 		return *this;
 	}
 
-	constexpr VecIterator operator++(int)
+	constexpr vector_iterator operator++(int)
 	{
-		VecIterator it = *this;
+		vector_iterator it = *this;
 		++(*this);
 		return it;
 	}
 
-	constexpr VecIterator& operator--()
+	constexpr vector_iterator& operator--()
 	{
 		m_ptr--;
 		return *this;
 	}
 
-	constexpr VecIterator operator--(int)
+	constexpr vector_iterator operator--(int)
 	{
-		VecIterator it = *this;
+		vector_iterator it = *this;
 		--(*this);
 		return it;
 	}
 
-	constexpr VecIterator& operator+=(size_type offset)
+	constexpr vector_iterator& operator+=(size_type offset)
 	{
 		m_ptr += offset;
 		return *this;
 	}
 
-	constexpr VecIterator& operator-=(size_type offset)
+	constexpr vector_iterator& operator-=(size_type offset)
 	{
 		m_ptr -= offset;
 		return *this;
 	}
 
-	constexpr VecIterator operator+(size_type offset) const
+	constexpr vector_iterator operator+(size_type offset) const
 	{
-		VecIterator it = *this;
+		vector_iterator it = *this;
 		return it += offset;
 	}
 
-	constexpr VecIterator operator-(size_type offset) const
+	constexpr vector_iterator operator-(size_type offset) const
 	{
-		VecIterator it = *this;
+		vector_iterator it = *this;
 		return it -= offset;
 	}
 
@@ -80,12 +82,12 @@ public:
 	constexpr reference operator*() { return *m_ptr; }
 	constexpr const_reference operator*() const { return *m_ptr; }
 
-	constexpr bool operator==(const VecIterator& other) const { return m_ptr == other.m_ptr; }
-	constexpr bool operator!=(const VecIterator& other) const { return !(*this == other); }
-	constexpr bool operator<(const VecIterator& other) const { return m_ptr < other.m_ptr; }
-	constexpr bool operator<=(const VecIterator& other) const { return m_ptr <= other.m_ptr; }
-	constexpr bool operator>(const VecIterator& other) const { return m_ptr > other.m_ptr; }
-	constexpr bool operator>=(const VecIterator& other) const { return m_ptr >= other.m_ptr; }
+	constexpr bool operator==(const vector_iterator& other) const { return m_ptr == other.m_ptr; }
+	constexpr bool operator!=(const vector_iterator& other) const { return !(*this == other); }
+	constexpr bool operator<(const vector_iterator& other) const { return m_ptr < other.m_ptr; }
+	constexpr bool operator<=(const vector_iterator& other) const { return m_ptr <= other.m_ptr; }
+	constexpr bool operator>(const vector_iterator& other) const { return m_ptr > other.m_ptr; }
+	constexpr bool operator>=(const vector_iterator& other) const { return m_ptr >= other.m_ptr; }
 
 private:
 	pointer m_ptr;
@@ -96,13 +98,11 @@ class vector
 {
 public:
 	using value_type = T;
-	using iterator = T*;
-	using const_iterator = T const*;
+	using iterator = vector_iterator<T>;
 	using pointer = T*;
 	using const_pointer = T const*;
 	using reference = value_type&;
 	using const_reference = value_type const&;
-	using size_type = std::size_t;
 
 	constexpr explicit vector() = default;
 
@@ -191,10 +191,10 @@ public:
 	constexpr bool operator!=(vector const& other) const { return !(*this == other); }
 
 	constexpr iterator begin() { return iterator(m_elements); }
-	constexpr const_iterator begin() const { return iterator(m_elements); }
+	constexpr iterator begin() const { return iterator(m_elements); }
 
 	constexpr iterator end() { return iterator(m_elements + m_size); }
-	constexpr const_iterator end() const { return iterator(m_elements + m_size); }
+	constexpr iterator end() const { return iterator(m_elements + m_size); }
 
 	constexpr reference front() { return m_elements[0]; }
 	constexpr const_reference front() const { return m_elements[0]; }
@@ -212,7 +212,7 @@ public:
 private:
 	constexpr void reallocate(size_type new_cap)
 	{
-		auto* new_block = allocate_new_T_block(new_cap);
+		T* new_block = allocate_new_T_block(new_cap);
 		transfer_items_to_new_block<T>(new_block);
 
 		internal_clear();
