@@ -143,8 +143,15 @@ public:
 		if (m_capacity >= new_cap)
 			return;
 
-		m_elements = static_cast<T*>(::operator new(sizeof(T) * new_cap));
-		m_capacity = new_cap;
+		vector<T> tmp;
+		tmp.m_elements = static_cast<T*>(::operator new(sizeof(T) * new_cap));
+		tmp.m_capacity = new_cap;
+		tmp.m_size = m_size;
+
+		for (size_t i = 0; i < m_size; i++)
+			new (&tmp.m_elements[i]) T(m_elements[i]);
+
+		swap(tmp);
 	}
 
 	constexpr void swap(vector& other) noexcept

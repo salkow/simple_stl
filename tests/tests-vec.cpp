@@ -46,6 +46,9 @@ TEST_CASE("Non pointer tests", "[non_pointer_vec]")
 	REQUIRE(my_vec_2.size() == 6);
 	REQUIRE(my_vec_2.capacity() == 7);
 
+	my_vec_2.reserve(10);
+	REQUIRE(my_vec_2.capacity() == 10);
+
 	my_vec_2.pop_back();
 	REQUIRE(my_vec_2.size() == 5);
 
