@@ -34,6 +34,7 @@ TEST_CASE("Non pointer tests", "[non_pointer_vec]")
 	REQUIRE(my_vec_1.size() == 0);
 
 	auto my_vec_2 = vector<int>(2);
+	my_vec_2.reserve(2);
 	my_vec_2.push_back(15);
 	my_vec_2.push_back(16);
 	my_vec_2.push_back(17);
@@ -42,15 +43,15 @@ TEST_CASE("Non pointer tests", "[non_pointer_vec]")
 	my_vec_2[1] = 26;
 	REQUIRE(my_vec_2[1] == 26);
 
-	REQUIRE(my_vec_2.size() == 4);
-	REQUIRE(my_vec_2.capacity() == 4);
+	REQUIRE(my_vec_2.size() == 6);
+	REQUIRE(my_vec_2.capacity() == 7);
 
 	my_vec_2.pop_back();
-	REQUIRE(my_vec_2.size() == 3);
+	REQUIRE(my_vec_2.size() == 5);
 
-	REQUIRE(my_vec_2[0] == 15);
+	REQUIRE(my_vec_2[0] == 0);
 	REQUIRE(my_vec_2[1] == 26);
-	REQUIRE(my_vec_2[2] == 17);
+	REQUIRE(my_vec_2[2] == 15);
 
 	my_vec_2.clear();
 
@@ -92,7 +93,8 @@ TEST_CASE("Pointer tests", "[non_pointer_vec]")
 
 	REQUIRE(my_vec_1.size() == 0);
 
-	auto my_vec_2 = vector<int*>(2);
+	auto my_vec_2 = vector<int*>();
+	my_vec_2.reserve(2);
 	my_vec_2.push_back(new int(15));
 	my_vec_2.push_back(new int(16));
 	my_vec_2.push_back(new int(17));

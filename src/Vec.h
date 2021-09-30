@@ -105,15 +105,15 @@ public:
 	using const_reference = value_type const&;
 	using size_type = std::size_t;
 
-	constexpr explicit vector(size_type capacity = DEFAULT_CAPACITY) :
-		m_capacity(capacity), m_elements(static_cast<T*>(::operator new(sizeof(T) * capacity)))
+	constexpr explicit vector() = default;
+
+	constexpr explicit vector(size_type num_of_elements)
 	{
+		for (size_type i = 0; i < num_of_elements; ++i)
+			emplace_back();
 	}
 
-	constexpr vector(vector&& other) noexcept : m_capacity(0), m_elements(nullptr)
-	{
-		move(std::move(other));
-	}
+	constexpr vector(vector&& other) noexcept { move(std::move(other)); }
 
 	constexpr vector& operator=(vector&& other) noexcept
 	{
@@ -122,7 +122,7 @@ public:
 		return *this;
 	}
 
-	constexpr vector(vector const& other) : m_capacity(0), m_elements(nullptr) { copy(other); }
+	constexpr vector(vector const& other) { copy(other); }
 
 	constexpr vector& operator=(vector const& other)
 	{
@@ -137,6 +137,15 @@ public:
 	{
 		clear();
 		::operator delete(m_elements);
+	}
+
+	constexpr void reserve(size_type new_cap)
+	{
+		if (m_capacity >= new_cap)
+			return;
+
+		m_elements = static_cast<T*>(::operator new(sizeof(T) * new_cap));
+		m_capacity = new_cap;
 	}
 
 	constexpr void swap(vector& other) noexcept
@@ -248,9 +257,9 @@ private:
 		return m_capacity * CAPACITY_INCREASE_FACTOR + 1;
 	}
 
-	size_type m_capacity;
+	size_type m_capacity = 0;
 	size_type m_size = 0;
-	T* m_elements;
+	T* m_elements = nullptr;
 };
 
 } // namespace simple
