@@ -7,7 +7,6 @@
 namespace simple
 {
 
-const std::size_t DEFAULT_CAPACITY = 2;
 constexpr float CAPACITY_INCREASE_FACTOR = 1.5;
 
 template <typename vector>
