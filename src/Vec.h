@@ -189,7 +189,7 @@ public:
 
 	constexpr void clear()
 	{
-		internal_clear<T>();
+		internal_clear();
 		m_size = 0;
 	}
 
@@ -226,7 +226,7 @@ private:
 		for (size_t i = 0; i < m_capacity; i++)
 			new (&new_block[i]) T(std::move(m_elements[i]));
 
-		internal_clear<T>();
+		internal_clear();
 
 		::operator delete(m_elements);
 
@@ -258,18 +258,10 @@ private:
 			push_back(elem);
 	}
 
-	template <typename X>
-	typename std::enable_if<
-		!std::is_trivially_destructible<X>::value>::type constexpr internal_clear()
+	constexpr void internal_clear()
 	{
 		for (size_type i = 0; i < m_size; i++)
 			m_elements[i].~T();
-	}
-
-	template <typename X>
-	typename std::enable_if<
-		std::is_trivially_destructible<X>::value>::type constexpr internal_clear()
-	{
 	}
 
 	constexpr size_type get_increased_capacity()
