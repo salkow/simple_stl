@@ -186,7 +186,7 @@ public:
 
 	constexpr bool operator==(vector const& other) const
 	{
-		return (size() == other.size()) && std::equal(begin(), end(), other.begin());
+		return (m_size == other.m_size) && std::equal(begin(), end(), other.begin());
 	}
 	constexpr bool operator!=(vector const& other) const { return !(*this == other); }
 
