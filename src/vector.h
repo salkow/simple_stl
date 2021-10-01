@@ -135,7 +135,7 @@ public:
 
 	~vector()
 	{
-		clear();
+		destruct_elements();
 		::operator delete(m_elements);
 	}
 
