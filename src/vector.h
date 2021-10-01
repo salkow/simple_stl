@@ -180,7 +180,7 @@ public:
 
 	constexpr void clear()
 	{
-		internal_clear();
+		destruct_elements();
 		m_size = 0;
 	}
 
@@ -215,7 +215,7 @@ private:
 		T* new_block = allocate_new_T_block(new_cap);
 		transfer_items_to_new_block<T>(new_block);
 
-		internal_clear();
+		destruct_elements();
 
 		::operator delete(m_elements);
 
@@ -248,7 +248,7 @@ private:
 
 	constexpr void copy(vector const& other)
 	{
-		internal_clear();
+		destruct_elements();
 
 		if (m_capacity < other.m_size)
 		{
@@ -263,7 +263,7 @@ private:
 			new (&m_elements[i]) T(other.m_elements[i]);
 	}
 
-	constexpr void internal_clear()
+	constexpr void destruct_elements()
 	{
 		for (size_type i = 0; i < m_size; i++)
 			m_elements[i].~T();
