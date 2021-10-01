@@ -83,7 +83,7 @@ public:
 	constexpr const_reference operator*() const { return *m_ptr; }
 
 	constexpr bool operator==(const vector_iterator& other) const { return m_ptr == other.m_ptr; }
-	constexpr bool operator!=(const vector_iterator& other) const { return !(*this == other); }
+	constexpr bool operator!=(const vector_iterator& other) const { return m_ptr != other.m_ptr; }
 	constexpr bool operator<(const vector_iterator& other) const { return m_ptr < other.m_ptr; }
 	constexpr bool operator<=(const vector_iterator& other) const { return m_ptr <= other.m_ptr; }
 	constexpr bool operator>(const vector_iterator& other) const { return m_ptr > other.m_ptr; }
@@ -216,7 +216,6 @@ private:
 		transfer_items_to_new_block<T>(new_block);
 
 		destruct_elements();
-
 		::operator delete(m_elements);
 
 		m_elements = new_block;
