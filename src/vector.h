@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <type_traits>
+#include <memory>
 
 namespace simple
 {
@@ -109,8 +110,8 @@ public:
 	constexpr explicit vector(size_type num_of_elements, const T& value = T())
 	{
 		reallocate(num_of_elements);
-		for (size_type i = 0; i < num_of_elements; ++i)
-			emplace_back(value);
+		m_size = num_of_elements;
+		std::uninitialized_fill(this->begin(), this->end(), value);
 	}
 
 	constexpr vector(vector&& other) noexcept { move(std::move(other)); }
@@ -186,6 +187,7 @@ public:
 	{
 		return (m_size == other.m_size) && std::equal(begin(), end(), other.begin());
 	}
+
 	constexpr bool operator!=(vector const& other) const { return !(*this == other); }
 
 	constexpr iterator begin() { return iterator(m_elements); }
@@ -276,9 +278,9 @@ private:
 		return static_cast<T*>(::operator new(sizeof(T) * size));
 	}
 
+	T* m_elements = nullptr;
 	size_type m_capacity = 0;
 	size_type m_size = 0;
-	T* m_elements = nullptr;
 };
 
 } // namespace simple
