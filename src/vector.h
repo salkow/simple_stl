@@ -141,10 +141,8 @@ public:
 
 	constexpr void reserve(size_type new_cap)
 	{
-		if (m_capacity >= new_cap)
-			return;
-
-		reallocate(new_cap);
+		if (m_capacity < new_cap)
+			reallocate(new_cap);
 	}
 
 	constexpr void swap(vector& other) noexcept
