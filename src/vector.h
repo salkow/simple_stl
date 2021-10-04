@@ -116,14 +116,13 @@ public:
 
 	constexpr vector(vector&& other) noexcept { move(std::move(other)); }
 
-	constexpr vector& operator=(vector&& other) noexcept
-	{
-		move(std::move(other));
-
-		return *this;
-	}
-
 	constexpr vector(vector const& other) { copy(other); }
+
+	~vector()
+	{
+		destruct_elements();
+		::operator delete(m_elements);
+	}
 
 	constexpr vector& operator=(vector const& other)
 	{
@@ -134,11 +133,22 @@ public:
 		return *this;
 	}
 
-	~vector()
+	constexpr vector& operator=(vector&& other) noexcept
 	{
-		destruct_elements();
-		::operator delete(m_elements);
+		move(std::move(other));
+
+		return *this;
 	}
+
+	constexpr bool operator==(vector const& other) const
+	{
+		return (m_size == other.m_size) && std::equal(begin(), end(), other.begin());
+	}
+
+	constexpr bool operator!=(vector const& other) const { return !(*this == other); }
+
+	constexpr reference operator[](size_type pos) noexcept { return m_elements[pos]; }
+	constexpr const_reference operator[](size_type pos) const noexcept { return m_elements[pos]; }
 
 	constexpr void reserve(size_type new_cap)
 	{
@@ -168,46 +178,38 @@ public:
 		return m_elements[m_size++];
 	}
 
-	constexpr void pop_back()
+	constexpr void pop_back() noexcept
 	{
 		--m_size;
 		m_elements[m_size].~T();
 	}
 
-	constexpr reference operator[](size_type pos) { return m_elements[pos]; }
-	constexpr const_reference operator[](size_type pos) const { return m_elements[pos]; }
-
-	constexpr void clear()
+	constexpr void clear() noexcept
 	{
 		destruct_elements();
 		m_size = 0;
 	}
 
-	constexpr bool operator==(vector const& other) const
-	{
-		return (m_size == other.m_size) && std::equal(begin(), end(), other.begin());
-	}
+	constexpr iterator begin() noexcept { return iterator(m_elements); }
+	constexpr iterator begin() const noexcept { return iterator(m_elements); }
+	constexpr iterator cbegin() const noexcept { return iterator(m_elements); }
 
-	constexpr bool operator!=(vector const& other) const { return !(*this == other); }
+	constexpr iterator end() noexcept { return iterator(m_elements + m_size); }
+	constexpr iterator end() const noexcept { return iterator(m_elements + m_size); }
+	constexpr iterator cend() const noexcept { return iterator(m_elements + m_size); }
 
-	constexpr iterator begin() { return iterator(m_elements); }
-	constexpr iterator begin() const { return iterator(m_elements); }
+	constexpr reference front() noexcept { return m_elements[0]; }
+	constexpr const_reference front() const noexcept { return m_elements[0]; }
 
-	constexpr iterator end() { return iterator(m_elements + m_size); }
-	constexpr iterator end() const { return iterator(m_elements + m_size); }
+	constexpr reference back() noexcept { return m_elements[m_size - 1]; }
+	constexpr const_reference back() const noexcept { return m_elements[m_size - 1]; }
 
-	constexpr reference front() { return m_elements[0]; }
-	constexpr const_reference front() const { return m_elements[0]; }
+	constexpr pointer data() noexcept { return m_elements; }
+	constexpr const_pointer data() const noexcept { return m_elements; }
 
-	constexpr reference back() { return m_elements[m_size - 1]; }
-	constexpr const_reference back() const { return m_elements[m_size - 1]; }
-
-	constexpr pointer data() { return m_elements; }
-	constexpr const_pointer data() const { return m_elements; }
-
-	constexpr size_type size() const { return m_size; }
-	constexpr size_type capacity() const { return m_capacity; }
-	constexpr size_type empty() const { return m_size == 0; }
+	constexpr size_type size() const noexcept { return m_size; }
+	constexpr size_type capacity() const noexcept { return m_capacity; }
+	constexpr size_type empty() const noexcept { return m_size == 0; }
 
 private:
 	constexpr void reallocate(size_type new_cap)
