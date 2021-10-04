@@ -224,7 +224,7 @@ private:
 	typename std::enable_if<!std::is_move_assignable<X>::value>::
 		type constexpr transfer_items_to_new_block(X* new_block) const
 	{
-		for (size_type i = 0; i < m_capacity; ++i)
+		for (size_type i = 0; i < m_size; ++i)
 			new (&new_block[i]) T(m_elements[i]);
 	}
 
@@ -232,7 +232,7 @@ private:
 	typename std::enable_if<
 		std::is_move_assignable<X>::value>::type constexpr transfer_items_to_new_block(X* new_block)
 	{
-		for (size_type i = 0; i < m_capacity; ++i)
+		for (size_type i = 0; i < m_size; ++i)
 			new (&new_block[i]) T(std::move(m_elements[i]));
 	}
 
