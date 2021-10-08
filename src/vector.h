@@ -1,5 +1,5 @@
-#ifndef VEC_H
-#define VEC_H
+#ifndef VECTOR_H
+#define VECTOR_H
 
 #include <algorithm>
 #include <type_traits>
@@ -287,4 +287,4 @@ private:
 
 } // namespace simple
 
-#endif // VEC_HPP
+#endif // VECTOR_H
