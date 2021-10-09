@@ -266,8 +266,8 @@ private:
 
 	constexpr void destruct_elements()
 	{
-		for (size_type i = 0; i < m_size; i++)
-			m_elements[i].~T();
+		for (auto& i : *this)
+			i.~T();
 	}
 
 	constexpr size_type get_increased_capacity() const
