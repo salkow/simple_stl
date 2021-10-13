@@ -111,8 +111,8 @@ public:
 	constexpr explicit vector(size_type num_of_elements, const T& value = T())
 	{
 		reallocate(num_of_elements);
-		m_size = num_of_elements;
-		std::uninitialized_fill(this->begin(), this->end(), value);
+		for (size_type i = 0; i < num_of_elements; ++i)
+			emplace_back(value);
 	}
 
 	constexpr vector(vector&& other) noexcept { move(std::move(other)); }
