@@ -13,6 +13,14 @@ TEST_CASE("Non pointer tests", "[non_pointer_vec]")
 	my_vec_1.push_back(6);
 	my_vec_1.emplace_back(7);
 
+	try
+	{
+		my_vec_1.at(9);
+	}
+	catch (const std::out_of_range& e)
+	{
+	}
+
 	REQUIRE(my_vec_1.size() == 3);
 	REQUIRE(my_vec_1.capacity() == 4);
 
@@ -22,6 +30,8 @@ TEST_CASE("Non pointer tests", "[non_pointer_vec]")
 
 	my_vec_1[1] = 8;
 	REQUIRE(my_vec_1[1] == 8);
+	my_vec_1.at(2) = 9;
+	REQUIRE(my_vec_1.at(2) == 9);
 
 	my_vec_1.pop_back();
 	REQUIRE(my_vec_1.size() == 2);
@@ -75,6 +85,14 @@ TEST_CASE("Pointer tests", "[non_pointer_vec]")
 	my_vec_1.push_back(new int(6));
 	my_vec_1.emplace_back(new int(7));
 
+	try
+	{
+		my_vec_1.at(15);
+	}
+	catch (const std::out_of_range& e)
+	{
+	}
+
 	REQUIRE(my_vec_1.size() == 3);
 	REQUIRE(my_vec_1.capacity() == 4);
 
@@ -90,6 +108,11 @@ TEST_CASE("Pointer tests", "[non_pointer_vec]")
 
 	my_vec_1[1] = new int(8);
 	REQUIRE(*(my_vec_1[1]) == 8);
+
+	delete my_vec_1[2];
+
+	my_vec_1.at(2) = new int(9);
+	REQUIRE(*(my_vec_1.at(2)) == 9);
 
 	delete my_vec_1[my_vec_1.size() - 1];
 	my_vec_1.pop_back();
@@ -193,6 +216,7 @@ TEST_CASE("Iterator tests", "[iterator_vec]")
 		counter = 0;
 		for (int iter_value : my_vec)
 		{
+			iter_value++;
 			counter++;
 		}
 
@@ -356,9 +380,6 @@ TEST_CASE("move_copy_swap", "[move_copy_swap]")
 
 	REQUIRE(my_vec_4.size() == 2);
 	REQUIRE(my_vec_3.size() == 3);
-
-	REQUIRE(my_vec_4.size() == 3);
-	REQUIRE(my_vec_3.size() == 2);
 
 	auto my_vec_5 = vector<string>();
 	my_vec_5.push_back("10");

@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <type_traits>
 #include <memory>
+#include <exception>
 
 namespace simple
 {
@@ -142,13 +143,42 @@ public:
 
 	constexpr bool operator==(vector const& other) const
 	{
-		return (m_size == other.m_size) && std::equal(begin(), end(), other.begin());
+		if (m_size != other.m_size)
+			return false;
+
+		auto this_first = this->begin();
+		const auto this_last = this->end();
+		auto other_first = other.begin();
+
+		for (; this_first != this_last; ++this_first, ++other_first)
+		{
+			if (*this_first != *other_first)
+				return false;
+		}
+
+		return true;
 	}
 
 	constexpr bool operator!=(vector const& other) const { return !(*this == other); }
 
 	constexpr reference operator[](size_type pos) noexcept { return m_elements[pos]; }
 	constexpr const_reference operator[](size_type pos) const noexcept { return m_elements[pos]; }
+
+	constexpr reference at(size_type pos)
+	{
+		if (pos < m_size)
+			return m_elements[pos];
+
+		throw std::out_of_range("Index out of range");
+	}
+
+	constexpr const_reference at(size_type pos) const
+	{
+		if (pos < m_size)
+			return m_elements[pos];
+
+		throw std::out_of_range("Index out of range");
+	}
 
 	constexpr void reserve(size_type new_cap)
 	{
