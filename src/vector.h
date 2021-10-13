@@ -156,13 +156,6 @@ public:
 			reallocate(new_cap);
 	}
 
-	constexpr void swap(vector& other) noexcept
-	{
-		std::swap(m_capacity, other.m_capacity);
-		std::swap(m_size, other.m_size);
-		std::swap(m_elements, other.m_elements);
-	}
-
 	constexpr void push_back(const T& value) { emplace_back(value); }
 
 	constexpr void push_back(T&& value) { emplace_back(std::move(value)); }

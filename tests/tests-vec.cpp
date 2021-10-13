@@ -357,8 +357,6 @@ TEST_CASE("move_copy_swap", "[move_copy_swap]")
 	REQUIRE(my_vec_4.size() == 2);
 	REQUIRE(my_vec_3.size() == 3);
 
-	my_vec_3.swap(my_vec_4);
-
 	REQUIRE(my_vec_4.size() == 3);
 	REQUIRE(my_vec_3.size() == 2);
 
