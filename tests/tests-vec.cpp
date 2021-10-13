@@ -1,6 +1,7 @@
 #include <catch2/catch.hpp>
 
 #include <string>
+#include <algorithm>
 #include "../src/vector.h"
 
 using std::string;
@@ -203,11 +204,7 @@ TEST_CASE("Iterator tests", "[iterator_vec]")
 
 		REQUIRE(value == 5);
 
-		int counter = 0;
-		for (vector<int>::iterator it = my_vec.begin(); it != my_vec.end(); it++)
-		{
-			counter++;
-		}
+		auto counter = std::distance(my_vec.begin(), my_vec.end());
 
 		REQUIRE(counter == 5);
 
@@ -259,12 +256,7 @@ TEST_CASE("Iterator tests", "[iterator_vec]")
 		value = my_iter[4];
 		REQUIRE(value == "5");
 
-		int counter = 0;
-		for (vector<string>::iterator it = my_vec.begin(); it != my_vec.end(); it++)
-		{
-			counter++;
-		}
-
+		auto counter = std::distance(my_vec.begin(), my_vec.end());
 		REQUIRE(counter == 5);
 
 		my_vec.pop_back();

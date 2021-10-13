@@ -1,9 +1,9 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
-#include <algorithm>
 #include <type_traits>
-#include <memory>
+#include <utility>
+#include <iterator>
 #include <exception>
 
 namespace simple
@@ -16,13 +16,14 @@ template <typename T>
 class vector_iterator
 {
 public:
-	using difference_type = T;
 	using value_type = T;
 	using pointer = value_type*;
 	using reference = value_type&;
-	using const_reference = value_type const&;
-	using iterator_category = std::forward_iterator_tag;
+	using const_reference = const value_type&;
+	using iterator_category = std::random_access_iterator_tag;
+	using difference_type = std::ptrdiff_t;
 
+	vector_iterator() = default;
 	constexpr explicit vector_iterator(pointer ptr) : m_ptr(ptr) {}
 
 	constexpr vector_iterator& operator++()
@@ -33,8 +34,8 @@ public:
 
 	constexpr vector_iterator operator++(int)
 	{
-		vector_iterator it = *this;
-		++(*this);
+		vector_iterator it(*this);
+		++m_ptr;
 		return it;
 	}
 
@@ -46,8 +47,8 @@ public:
 
 	constexpr vector_iterator operator--(int)
 	{
-		vector_iterator it = *this;
-		--(*this);
+		vector_iterator it(*this);
+		--m_ptr;
 		return it;
 	}
 
@@ -65,15 +66,17 @@ public:
 
 	constexpr vector_iterator operator+(size_type offset) const
 	{
-		vector_iterator it = *this;
+		vector_iterator it(*this);
 		return it += offset;
 	}
 
 	constexpr vector_iterator operator-(size_type offset) const
 	{
-		vector_iterator it = *this;
+		vector_iterator it(*this);
 		return it -= offset;
 	}
+
+	difference_type operator-(const vector_iterator& other) const { return m_ptr - other.m_ptr; }
 
 	constexpr reference operator[](size_type index) { return *(m_ptr + index); }
 	constexpr const_reference operator[](size_type index) const { return *(m_ptr + index); }
@@ -92,7 +95,7 @@ public:
 	constexpr bool operator>=(const vector_iterator& other) const { return m_ptr >= other.m_ptr; }
 
 private:
-	pointer m_ptr;
+	pointer m_ptr = nullptr;
 };
 
 template <class T>
