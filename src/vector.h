@@ -18,6 +18,7 @@ class vector_iterator
 public:
 	using value_type = T;
 	using pointer = value_type*;
+	using const_pointer = const value_type*;
 	using reference = value_type&;
 	using const_reference = const value_type&;
 	using iterator_category = std::random_access_iterator_tag;
@@ -82,7 +83,7 @@ public:
 	constexpr const_reference operator[](size_type index) const { return *(m_ptr + index); }
 
 	constexpr pointer operator->() { return m_ptr; }
-	constexpr pointer operator->() const { return m_ptr; }
+	constexpr const_pointer operator->() const { return m_ptr; }
 
 	constexpr reference operator*() { return *m_ptr; }
 	constexpr const_reference operator*() const { return *m_ptr; }
@@ -150,10 +151,9 @@ public:
 			return false;
 
 		auto this_first = this->begin();
-		const auto this_last = this->end();
 		auto other_first = other.begin();
 
-		for (; this_first != this_last; ++this_first, ++other_first)
+		for (; this_first != this->end(); ++this_first, ++other_first)
 		{
 			if (*this_first != *other_first)
 				return false;
