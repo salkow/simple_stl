@@ -150,12 +150,12 @@ public:
 		if (m_size != other.m_size)
 			return false;
 
-		auto this_first = this->begin();
-		auto other_first = other.begin();
+		auto this_it = this->begin();
+		auto other_it = other.begin();
 
-		for (; this_first != this->end(); ++this_first, ++other_first)
+		for (; this_it != this->end(); ++this_it, ++other_it)
 		{
-			if (*this_first != *other_first)
+			if (*this_it != *other_it)
 				return false;
 		}
 
