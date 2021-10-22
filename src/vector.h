@@ -112,11 +112,18 @@ public:
 
 	constexpr explicit vector() = default;
 
-	constexpr explicit vector(size_type num_of_elements, const T& value = T())
+	constexpr explicit vector(size_type num_of_elements, const T& value)
 	{
 		reallocate(num_of_elements);
 		for (size_type i = 0; i < num_of_elements; ++i)
 			emplace_back(value);
+	}
+
+	constexpr explicit vector(size_type num_of_elements)
+	{
+		reallocate(num_of_elements);
+		for (size_type i = 0; i < num_of_elements; ++i)
+			emplace_back(T());
 	}
 
 	constexpr vector(vector&& other) noexcept { move(std::move(other)); }
@@ -193,7 +200,7 @@ public:
 
 	constexpr void push_back(T&& value) { emplace_back(std::move(value)); }
 
-	template <typename... Args>
+	template <class... Args>
 	constexpr reference emplace_back(Args&&... args)
 	{
 		if (m_size == m_capacity)
