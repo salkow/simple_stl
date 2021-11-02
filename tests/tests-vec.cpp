@@ -1,4 +1,4 @@
-#include <catch2/catch.hpp>
+#include "../lib/include/catch2/catch.hpp"
 
 #include "../src/vector.h"
 

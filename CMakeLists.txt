@@ -25,12 +25,11 @@ set(TEST_TARGET "run_tests")
 
 file(GLOB_RECURSE TEST_SOURCES tests/*.cpp)
 
-find_package(Catch2 REQUIRED)
-add_executable(${TEST_TARGET} ${TEST_SOURCES})
+find_package(Catch2 REQUIRED PATHS "${PROJECT_SOURCE_DIR}/lib")
+
+add_executable(${TEST_TARGET} ${NO_MAIN_SOURCES} ${TEST_SOURCES})
 target_link_libraries(${TEST_TARGET} PRIVATE Catch2::Catch2)
 
 include(CTest)
 include(Catch)
-include(cmake/Catch.cmake)
-include(cmake/FindCatch2.cmake)
 catch_discover_tests(${TEST_TARGET})
