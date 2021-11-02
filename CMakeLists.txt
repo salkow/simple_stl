@@ -31,4 +31,5 @@ target_link_libraries(${TEST_TARGET} PRIVATE Catch2::Catch2)
 
 include(CTest)
 include(Catch)
+include(cmake/Catch.cmake)
 catch_discover_tests(${TEST_TARGET})
