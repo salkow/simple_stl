@@ -26,6 +26,7 @@ public:
 	{
 		reset(u.get());
 		u.m_data = nullptr;
+		return *this;
 	}
 
 	unique_ptr& operator=(std::nullptr_t) noexcept
