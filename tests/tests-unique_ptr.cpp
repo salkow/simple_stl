@@ -1,11 +1,8 @@
 #include "../lib/include/catch2/catch.hpp"
-
 #include "../src/unique_ptr.h"
 
 #include <utility>
 #include <string>
-
-#include <memory>
 
 using simple::make_unique;
 using simple::unique_ptr;

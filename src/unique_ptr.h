@@ -16,11 +16,7 @@ public:
 	explicit unique_ptr(pointer p) : m_data(p) {}
 	constexpr explicit unique_ptr(std::nullptr_t) noexcept {}
 
-	unique_ptr(unique_ptr&& u) noexcept
-	{
-		reset(u.get());
-		u.m_data = nullptr;
-	}
+	unique_ptr(unique_ptr&& u) noexcept : m_data(std::exchange(u.m_data, nullptr)) {}
 
 	unique_ptr& operator=(unique_ptr&& u) noexcept
 	{
