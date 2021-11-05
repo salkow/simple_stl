@@ -64,6 +64,20 @@ public:
 
 	[[nodiscard]] pointer get() const noexcept { return m_data; }
 
+	void reset()
+	{
+		decrement_and_delete_if_last();
+		m_data = nullptr;
+		m_count = nullptr;
+	}
+
+	void reset(T* p)
+	{
+		decrement_and_delete_if_last();
+		m_data = p;
+		m_count = new int64_t(1);
+	}
+
 private:
 	void decrement_and_delete_if_last()
 	{

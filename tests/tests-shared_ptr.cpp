@@ -92,4 +92,25 @@ TEST_CASE("shared_ptr self assignment in 2 steps", "[shared_ptr_self_assignment_
 	shared_ptr<int> x_1(new int(11));
 	shared_ptr<int> x_2(x_1);
 	x_1 = x_2;
+
+	REQUIRE(x_1.use_count() == 2);
+}
+
+TEST_CASE("shared_ptr reset", "[shared_ptr_reset]")
+{
+	shared_ptr<int> x_1;
+	x_1.reset();
+	REQUIRE(!x_1);
+
+	shared_ptr<int> x_2(new int(9));
+	x_2.reset();
+	REQUIRE(!x_2);
+
+	shared_ptr<int> x_3;
+	x_3.reset(new int(8));
+	REQUIRE(*x_3 == 8);
+
+	shared_ptr<int> x_4(new int(7));
+	x_3.reset(new int(8));
+	REQUIRE(*x_3 == 8);
 }
