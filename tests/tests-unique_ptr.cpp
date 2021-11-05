@@ -5,6 +5,8 @@
 #include <utility>
 #include <string>
 
+#include <memory>
+
 using simple::unique_ptr;
 
 TEST_CASE("Construct empty unique_ptr", "[construct_empty_unique_ptr]")
@@ -86,4 +88,24 @@ TEST_CASE("Bool operator", "[bool_operator")
 	x.reset(new int(9));
 
 	REQUIRE(x);
+}
+
+class Base
+{
+public:
+	int m_y;
+	explicit Base(int y) : m_y(y) {}
+};
+
+class Derived : public Base
+{
+public:
+	explicit Derived(int y) : Base(y) {}
+};
+
+TEST_CASE("Derived class pointer to a base class pointer", "[derived_pointer_to_base_pointer]")
+{
+	unique_ptr<Base> x(new Derived(9));
+
+	REQUIRE(x->m_y == 9);
 }
