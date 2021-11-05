@@ -41,6 +41,13 @@ public:
 
 	pointer get() const noexcept { return m_data; }
 
+	pointer release() noexcept
+	{
+		pointer tmp = m_data;
+		m_data = nullptr;
+		return tmp;
+	}
+
 	void reset(pointer ptr = pointer()) noexcept
 	{
 		delete m_data;

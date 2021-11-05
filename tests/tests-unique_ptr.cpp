@@ -34,3 +34,12 @@ TEST_CASE("Reset unique_ptr", "[reset_unique_ptr]")
 	unique_ptr<int> x_1(new int(7));
 	x_1 = nullptr;
 }
+
+TEST_CASE("Release", "[release]")
+{
+	unique_ptr<int> x(new int(9));
+
+	int* x_ptr = x.release();
+
+	delete x_ptr;
+}
