@@ -61,12 +61,6 @@ public:
 	}
 
 private:
-	void move(unique_ptr&& u)
-	{
-		reset(u.get());
-		u.m_data = nullptr;
-	}
-
 	T* m_data = nullptr;
 };
 
