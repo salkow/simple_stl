@@ -1,8 +1,7 @@
 #include "../lib/include/catch2/catch.hpp"
+#include "../src/vector.h"
 
 #include <string>
-
-#include "../src/vector.h"
 
 using simple::vector;
 

@@ -126,7 +126,11 @@ public:
 			emplace_back(T());
 	}
 
-	constexpr vector(vector&& other) noexcept { move(std::move(other)); }
+	constexpr vector(vector&& other) noexcept :
+		m_elements(std::exchange(other.m_elements, nullptr)),
+		m_capacity(std::exchange(other.m_capacity, 0)), m_size(std::exchange(other.m_size, 0))
+	{
+	}
 
 	constexpr vector(vector const& other) { copy(other); }
 
@@ -141,13 +145,20 @@ public:
 		if (this == &other)
 			return *this;
 
+		destruct_elements();
+
 		copy(other);
 		return *this;
 	}
 
 	constexpr vector& operator=(vector&& other) noexcept
 	{
-		move(std::move(other));
+		destruct_elements();
+		::operator delete(m_elements);
+
+		m_elements = std::exchange(other.m_elements, nullptr);
+		m_capacity = std::exchange(other.m_capacity, 0);
+		m_size = std::exchange(other.m_size, 0);
 
 		return *this;
 	}
@@ -257,7 +268,7 @@ public:
 private:
 	constexpr void reallocate(size_type new_cap)
 	{
-		T* new_block = allocate_new_t_block(new_cap);
+		T* new_block = allocate_new_blocks(new_cap);
 		transfer_items_to_new_block(new_block);
 
 		destruct_elements();
@@ -282,24 +293,12 @@ private:
 		}
 	}
 
-	constexpr void move(vector&& other)
-	{
-		destruct_elements();
-		::operator delete(m_elements);
-
-		m_capacity = std::exchange(other.m_capacity, 0);
-		m_elements = std::exchange(other.m_elements, nullptr);
-		m_size = std::exchange(other.m_size, 0);
-	}
-
 	constexpr void copy(vector const& other)
 	{
-		destruct_elements();
-
 		if (m_capacity < other.m_size)
 		{
 			::operator delete(m_elements);
-			m_elements = allocate_new_t_block(other.m_size);
+			m_elements = allocate_new_blocks(other.m_size);
 			m_capacity = other.m_size;
 		}
 
@@ -323,7 +322,7 @@ private:
 		return m_capacity * CAPACITY_INCREASE_FACTOR + 1;
 	}
 
-	constexpr T* allocate_new_t_block(size_type size) const
+	[[nodiscard]] constexpr T* allocate_new_blocks(size_type size) const
 	{
 		return static_cast<T*>(::operator new(sizeof(T) * size));
 	}
