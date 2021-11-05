@@ -35,7 +35,7 @@ public:
 	}
 
 	unique_ptr(const unique_ptr& p) = delete;
-	T& operator=(const unique_ptr& p) = delete;
+	unique_ptr& operator=(const unique_ptr& p) = delete;
 
 	T& operator*() const noexcept { return *m_data; }
 	pointer operator->() const noexcept { return m_data; }
@@ -68,6 +68,12 @@ private:
 
 	T* m_data = nullptr;
 };
+
+template <class T, class... Args>
+unique_ptr<T> make_unique(Args&&... args)
+{
+	return unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
 
 } // namespace simple
 

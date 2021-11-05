@@ -7,6 +7,7 @@
 
 #include <memory>
 
+using simple::make_unique;
 using simple::unique_ptr;
 
 TEST_CASE("Construct empty unique_ptr", "[construct_empty_unique_ptr]")
@@ -108,4 +109,11 @@ TEST_CASE("Derived class pointer to a base class pointer", "[derived_pointer_to_
 	unique_ptr<Base> x(new Derived(9));
 
 	REQUIRE(x->m_y == 9);
+}
+
+TEST_CASE("make_unique", "[make_unique]")
+{
+	auto x(make_unique<int>(0));
+
+	REQUIRE(*x == 0);
 }
