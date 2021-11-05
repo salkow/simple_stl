@@ -3,6 +3,7 @@
 #include "../src/unique_ptr.h"
 
 #include <utility>
+#include <string>
 
 using simple::unique_ptr;
 
@@ -42,4 +43,18 @@ TEST_CASE("Release", "[release]")
 	int* x_ptr = x.release();
 
 	delete x_ptr;
+}
+
+TEST_CASE("Arrow operator", "[arrow_operator")
+{
+	unique_ptr<std::string> x(new std::string("123"));
+
+	REQUIRE(x->size() == 3);
+}
+
+TEST_CASE("Dereference operator", "[dereference_operator")
+{
+	unique_ptr<int> x(new int(15));
+
+	REQUIRE(*x == 15);
 }

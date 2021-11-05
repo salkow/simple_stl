@@ -37,6 +37,9 @@ public:
 	unique_ptr(const unique_ptr& p) = delete;
 	T& operator=(const unique_ptr& p) = delete;
 
+	T& operator*() const noexcept { return *m_data; }
+	pointer operator->() const noexcept { return m_data; }
+
 	~unique_ptr() { delete m_data; }
 
 	pointer get() const noexcept { return m_data; }
