@@ -76,3 +76,14 @@ TEST_CASE("Dereference operator", "[dereference_operator")
 
 	REQUIRE(*x == 15);
 }
+
+TEST_CASE("Bool operator", "[bool_operator")
+{
+	unique_ptr<int> x;
+
+	REQUIRE(!x);
+
+	x.reset(new int(9));
+
+	REQUIRE(x);
+}
