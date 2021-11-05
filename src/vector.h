@@ -9,7 +9,7 @@
 namespace simple
 {
 
-constexpr float CAPACITY_INCREASE_FACTOR = 1.5;
+constexpr std::size_t CAPACITY_INCREASE_FACTOR = 2;
 using size_type = std::size_t;
 
 template <typename T>
@@ -174,7 +174,7 @@ public:
 	constexpr reference operator[](size_type pos) noexcept { return m_elements[pos]; }
 	constexpr const_reference operator[](size_type pos) const noexcept { return m_elements[pos]; }
 
-	constexpr reference at(size_type pos)
+	[[nodiscard]] constexpr reference at(size_type pos)
 	{
 		if (pos < m_size)
 			return m_elements[pos];
@@ -182,7 +182,7 @@ public:
 		throw std::out_of_range("Index out of range");
 	}
 
-	constexpr const_reference at(size_type pos) const
+	[[nodiscard]] constexpr const_reference at(size_type pos) const
 	{
 		if (pos < m_size)
 			return m_elements[pos];
@@ -211,6 +211,16 @@ public:
 		return m_elements[m_size++];
 	}
 
+	constexpr void insert(iterator first, iterator last)
+	{
+		size_type new_capacity = static_cast<size_type>(last - first) + m_size;
+
+		reserve(new_capacity);
+
+		for (; first != last; first++)
+			emplace_back(*first);
+	}
+
 	constexpr void pop_back() noexcept
 	{
 		--m_size;
@@ -223,32 +233,32 @@ public:
 		m_size = 0;
 	}
 
-	constexpr iterator begin() noexcept { return iterator(m_elements); }
-	constexpr iterator begin() const noexcept { return iterator(m_elements); }
-	constexpr iterator cbegin() const noexcept { return iterator(m_elements); }
+	[[nodiscard]] constexpr iterator begin() noexcept { return iterator(m_elements); }
+	[[nodiscard]] constexpr iterator begin() const noexcept { return iterator(m_elements); }
+	[[nodiscard]] constexpr iterator cbegin() const noexcept { return iterator(m_elements); }
 
-	constexpr iterator end() noexcept { return iterator(m_elements + m_size); }
-	constexpr iterator end() const noexcept { return iterator(m_elements + m_size); }
-	constexpr iterator cend() const noexcept { return iterator(m_elements + m_size); }
+	[[nodiscard]] constexpr iterator end() noexcept { return iterator(m_elements + m_size); }
+	[[nodiscard]] constexpr iterator end() const noexcept { return iterator(m_elements + m_size); }
+	[[nodiscard]] constexpr iterator cend() const noexcept { return iterator(m_elements + m_size); }
 
-	constexpr reference front() noexcept { return m_elements[0]; }
-	constexpr const_reference front() const noexcept { return m_elements[0]; }
+	[[nodiscard]] constexpr reference front() noexcept { return m_elements[0]; }
+	[[nodiscard]] constexpr const_reference front() const noexcept { return m_elements[0]; }
 
-	constexpr reference back() noexcept { return m_elements[m_size - 1]; }
-	constexpr const_reference back() const noexcept { return m_elements[m_size - 1]; }
+	[[nodiscard]] constexpr reference back() noexcept { return m_elements[m_size - 1]; }
+	[[nodiscard]] constexpr const_reference back() const noexcept { return m_elements[m_size - 1]; }
 
-	constexpr pointer data() noexcept { return m_elements; }
-	constexpr const_pointer data() const noexcept { return m_elements; }
+	[[nodiscard]] constexpr pointer data() noexcept { return m_elements; }
+	[[nodiscard]] constexpr const_pointer data() const noexcept { return m_elements; }
 
-	constexpr size_type size() const noexcept { return m_size; }
-	constexpr size_type capacity() const noexcept { return m_capacity; }
-	constexpr size_type empty() const noexcept { return m_size == 0; }
+	[[nodiscard]] constexpr size_type size() const noexcept { return m_size; }
+	[[nodiscard]] constexpr size_type capacity() const noexcept { return m_capacity; }
+	[[nodiscard]] constexpr size_type empty() const noexcept { return m_size == 0; }
 
 private:
 	constexpr void reallocate(size_type new_cap)
 	{
-		T* new_block = allocate_new_T_block(new_cap);
-		transfer_items_to_new_block<T>(new_block);
+		T* new_block = allocate_new_t_block(new_cap);
+		transfer_items_to_new_block(new_block);
 
 		destruct_elements();
 		::operator delete(m_elements);
@@ -257,24 +267,26 @@ private:
 		m_capacity = new_cap;
 	}
 
-	template <typename X>
-	typename std::enable_if_t<!std::is_nothrow_move_constructible<
-		X>::value> constexpr transfer_items_to_new_block(X* new_block) const
+	constexpr void transfer_items_to_new_block(T* new_block)
 	{
-		for (size_type i = 0; i < m_size; ++i)
-			new (&new_block[i]) T(m_elements[i]);
-	}
+		if constexpr (std::is_nothrow_move_constructible_v<T>)
+		{
+			for (size_type i = 0; i < m_size; ++i)
+				new (&new_block[i]) T(std::move(m_elements[i]));
+		}
 
-	template <typename X>
-	typename std::enable_if_t<std::is_nothrow_move_constructible<
-		X>::value> constexpr transfer_items_to_new_block(X* new_block)
-	{
-		for (size_type i = 0; i < m_size; ++i)
-			new (&new_block[i]) T(std::move(m_elements[i]));
+		else
+		{
+			for (size_type i = 0; i < m_size; ++i)
+				new (&new_block[i]) T(m_elements[i]);
+		}
 	}
 
 	constexpr void move(vector&& other)
 	{
+		destruct_elements();
+		::operator delete(m_elements);
+
 		m_capacity = std::exchange(other.m_capacity, 0);
 		m_elements = std::exchange(other.m_elements, nullptr);
 		m_size = std::exchange(other.m_size, 0);
@@ -287,7 +299,7 @@ private:
 		if (m_capacity < other.m_size)
 		{
 			::operator delete(m_elements);
-			m_elements = allocate_new_T_block(other.m_size);
+			m_elements = allocate_new_t_block(other.m_size);
 			m_capacity = other.m_size;
 		}
 
@@ -297,18 +309,21 @@ private:
 			new (&m_elements[i]) T(other.m_elements[i]);
 	}
 
-	constexpr void destruct_elements()
+	constexpr void destruct_elements() const
 	{
-		for (auto& i : *this)
-			i.~T();
+		if constexpr (!std::is_trivially_destructible_v<T>)
+		{
+			for (auto& i : *this)
+				i.~T();
+		}
 	}
 
-	constexpr size_type get_increased_capacity() const
+	[[nodiscard]] constexpr size_type get_increased_capacity() const
 	{
 		return m_capacity * CAPACITY_INCREASE_FACTOR + 1;
 	}
 
-	constexpr T* allocate_new_T_block(size_type size) const
+	constexpr T* allocate_new_t_block(size_type size) const
 	{
 		return static_cast<T*>(::operator new(sizeof(T) * size));
 	}

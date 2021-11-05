@@ -1,5 +1,7 @@
 #include "../lib/include/catch2/catch.hpp"
 
+#include <string>
+
 #include "../src/vector.h"
 
 using simple::vector;
@@ -19,7 +21,7 @@ TEST_CASE("Check capacity after reserve in vector.", "[capacity_after_reserve_ve
 	REQUIRE(empty_vector.capacity() == 10);
 }
 
-TEST_CASE("Check if defalt constructed elements exist in vector.",
+TEST_CASE("Check if default constructed elements exist in vector.",
 		  "[check_default_constructed_elements]")
 {
 	vector<int> my_vector(3);
@@ -132,8 +134,29 @@ TEST_CASE("Test iterators in vector.", "[test_iterators_vector]")
 	my_vec.push_back(5);
 	my_vec.emplace_back(6);
 
-	for (auto& x : my_vec)
+	for (const auto& x : my_vec)
 		sum += x;
 
 	REQUIRE(sum == 21);
+}
+
+TEST_CASE("Vector of long strings", "[vector_of_long_strings]")
+{
+	std::string s_1("This is a really really long string.");
+	std::string s_2("This is another really really really long string.");
+
+	vector<std::string>	vec;
+
+	vec.push_back(s_1);
+	vec.push_back(s_2);
+
+	REQUIRE(vec[0] == s_1);
+	REQUIRE(vec[1] == s_2);
+
+	vec.clear();
+
+	vec.emplace_back("This is the last really really really long string.");
+
+	REQUIRE(vec[0] != s_1);
+	REQUIRE(vec[0] != s_2);
 }
