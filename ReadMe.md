@@ -1,3 +1,1 @@
-[![CMake](https://github.com/salkow/SimpleVector/actions/workflows/cmake.yml/badge.svg)](https://github.com/salkow/SimpleVector/actions/workflows/cmake.yml)
-
-An alternative implementation of std::vector.
+A simple implementation of vector, forward_list, unique_ptr and shared_ptr.
