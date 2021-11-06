@@ -1,8 +1,10 @@
 #include "../lib/include/catch2/catch.hpp"
 #include "../src/shared_ptr.h"
 
+using simple::make_unique;
 using simple::shared_ptr;
 using simple::swap;
+using simple::unique_ptr;
 
 TEST_CASE("Construct empty shared_ptr", "[construct_empty_shared_ptr]")
 {
@@ -167,4 +169,16 @@ TEST_CASE("Swap shared_ptr", "[swap_shared_ptr]")
 
 	REQUIRE(*x_1 == 5);
 	REQUIRE(*x_2 == 9);
+}
+
+TEST_CASE("Construct from unique_ptr", "[construct_from_unique_ptr]")
+{
+	auto uni = make_unique<int>(3);
+	shared_ptr<int> sha = std::move(uni);
+	REQUIRE(*sha == 3);
+
+	auto uni_1 = make_unique<int>(4);
+	shared_ptr<int> sha_1(new int(0));
+	sha_1 = std::move(uni_1);
+	REQUIRE(*sha_1 == 4);
 }

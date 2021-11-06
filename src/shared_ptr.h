@@ -3,6 +3,8 @@
 
 #include <utility>
 
+#include "unique_ptr.h"
+
 namespace simple
 {
 
@@ -104,6 +106,20 @@ public:
 	shared_ptr(const shared_ptr<Y>& r) noexcept : m_data(r.m_data), m_count(r.m_count)
 	{
 		inc_count_if_valid();
+	}
+
+	template <class Y>
+	shared_ptr(unique_ptr<Y>&& r)
+	{
+		auto tmp = new control_block_ptr(r.release());
+		set_values(tmp->m_data, tmp);
+	}
+
+	template <class Y>
+	shared_ptr& operator=(unique_ptr<Y>&& r)
+	{
+		shared_ptr(std::move(r)).swap(*this);
+		return *this;
 	}
 
 	~shared_ptr() { decrement_and_del_if_last(); }
