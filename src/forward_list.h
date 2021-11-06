@@ -85,6 +85,8 @@ public:
 
 	forward_list(forward_list&& other) noexcept : m_head(std::move(other.m_head)) {}
 
+	forward_list(const forward_list& other) = delete;
+
 	~forward_list() { clear(); }
 
 	forward_list& operator=(forward_list&& other) noexcept
@@ -92,6 +94,8 @@ public:
 		m_head = std::move(other.m_head);
 		return *this;
 	}
+
+	forward_list& operator=(const forward_list& other) = delete;
 
 	void clear() noexcept { m_head = nullptr; }
 
