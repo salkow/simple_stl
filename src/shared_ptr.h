@@ -89,22 +89,9 @@ public:
 	{
 	}
 
-	shared_ptr& operator=(shared_ptr&& r) noexcept
+	shared_ptr& operator=(shared_ptr r) noexcept
 	{
-		decrement_and_del_if_last();
-
-		m_data = std::exchange(r.m_data, nullptr);
-		m_count = std::exchange(r.m_count, nullptr);
-		return *this;
-	}
-
-	template <class Y>
-	shared_ptr& operator=(shared_ptr<Y>&& r) noexcept
-	{
-		decrement_and_del_if_last();
-
-		m_data = std::exchange(r.m_data, nullptr);
-		m_count = std::exchange(r.m_count, nullptr);
+		r.swap(*this);
 		return *this;
 	}
 
@@ -114,34 +101,9 @@ public:
 	}
 
 	template <class Y>
-	shared_ptr(const shared_ptr<Y>& r) noexcept : m_data(r.get()), m_count(r.m_count)
+	shared_ptr(const shared_ptr<Y>& r) noexcept : m_data(r.m_data), m_count(r.m_count)
 	{
 		inc_count_if_valid();
-	}
-
-	shared_ptr& operator=(const shared_ptr& r)
-	{
-		if (m_count == r.m_count)
-			return *this;
-
-		decrement_and_del_if_last();
-		set_values(r.m_data, r.m_count);
-		inc_count_if_valid();
-
-		return *this;
-	}
-
-	template <class Y>
-	shared_ptr& operator=(const shared_ptr<Y>& r) noexcept
-	{
-		if (m_count == r.m_count)
-			return *this;
-
-		decrement_and_del_if_last();
-		set_values(r.m_data, r.m_count);
-		inc_count_if_valid();
-
-		return *this;
 	}
 
 	~shared_ptr() { decrement_and_del_if_last(); }
@@ -155,27 +117,12 @@ public:
 
 	[[nodiscard]] pointer get() const noexcept { return m_data; }
 
-	void reset()
-	{
-		decrement_and_del_if_last();
-		set_values(nullptr, nullptr);
-	}
-
-	void reset(T* ptr)
-	{
-		decrement_and_del_if_last();
-
-		auto tmp = new control_block_ptr(ptr);
-		set_values(tmp->m_data, tmp);
-	}
+	void reset() { shared_ptr().swap(*this); }
 
 	template <class Y>
 	void reset(Y* ptr)
 	{
-		decrement_and_del_if_last();
-
-		auto tmp = new control_block_ptr(static_cast<T*>(ptr));
-		set_values(tmp->m_data, tmp);
+		shared_ptr(ptr).swap(*this);
 	}
 
 	void swap(shared_ptr& r) noexcept
