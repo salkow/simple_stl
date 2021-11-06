@@ -2,7 +2,6 @@
 #include "../src/unique_ptr.h"
 
 #include <utility>
-#include <string>
 
 using simple::make_unique;
 using simple::unique_ptr;
@@ -30,7 +29,8 @@ TEST_CASE("Move operations", "[move_operations")
 	unique_ptr<int> x_2(std::move(x_1));
 	REQUIRE(*x_2 == 4);
 
-	unique_ptr<int> x_3 = std::move(x_2);
+	unique_ptr<int> x_3;
+	x_3 = std::move(x_2);
 	REQUIRE(*x_3 == 4);
 }
 
@@ -63,13 +63,6 @@ TEST_CASE("Release", "[release]")
 	delete x_ptr;
 }
 
-TEST_CASE("Arrow operator", "[arrow_operator")
-{
-	unique_ptr<std::string> x(new std::string("123"));
-
-	REQUIRE(x->size() == 3);
-}
-
 TEST_CASE("Dereference operator", "[dereference_operator")
 {
 	unique_ptr<int> x(new int(15));
@@ -91,8 +84,9 @@ TEST_CASE("Bool operator", "[bool_operator")
 class Base
 {
 public:
-	int m_y;
 	explicit Base(int y) : m_y(y) {}
+
+	int m_y;
 };
 
 class Derived : public Base
@@ -106,6 +100,17 @@ TEST_CASE("Derived class pointer to a base class pointer", "[derived_pointer_to_
 	unique_ptr<Base> x(new Derived(9));
 
 	REQUIRE(x->m_y == 9);
+
+	unique_ptr<Derived> derived(new Derived(8));
+
+	unique_ptr<Base> base = std::move(derived);
+
+	REQUIRE(base->m_y == 8);
+
+	unique_ptr<Base> other_base(new Base(9));
+	other_base = std::move(base);
+
+	REQUIRE(other_base->m_y == 8);
 }
 
 TEST_CASE("make_unique", "[make_unique]")

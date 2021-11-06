@@ -18,10 +18,29 @@ public:
 
 	unique_ptr(unique_ptr&& u) noexcept : m_data(std::exchange(u.m_data, nullptr)) {}
 
-	unique_ptr& operator=(unique_ptr&& u) noexcept
+	template <class U>
+	unique_ptr(unique_ptr<U>&& u) noexcept
 	{
-		reset(u.get());
-		u.m_data = nullptr;
+		unique_ptr<T> tmp(u.release());
+
+		m_data = std::exchange(tmp.m_data, nullptr);
+	}
+
+	unique_ptr& operator=(unique_ptr&& r) noexcept
+	{
+		reset(r.get());
+		r.m_data = nullptr;
+		return *this;
+	}
+
+	template <class U>
+	unique_ptr& operator=(unique_ptr<U>&& r) noexcept
+	{
+		unique_ptr<T> tmp(r.release());
+
+		reset(tmp.get());
+		r.m_data = nullptr;
+
 		return *this;
 	}
 
@@ -32,7 +51,7 @@ public:
 	}
 
 	unique_ptr(const unique_ptr& p) = delete;
-	unique_ptr& operator=(const unique_ptr& p) = delete;
+	unique_ptr& operator=(const unique_ptr& r) = delete;
 
 	T& operator*() const noexcept { return *m_data; }
 	pointer operator->() const noexcept { return m_data; }
