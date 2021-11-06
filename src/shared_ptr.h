@@ -68,52 +68,78 @@ class shared_ptr
 public:
 	using pointer = T*;
 
-	template <class TT, class... Args>
-	friend shared_ptr<TT> make_shared(Args&&... args);
-
 	constexpr shared_ptr() noexcept = default;
 	constexpr explicit shared_ptr(std::nullptr_t) noexcept {}
 
 	template <class Y>
-	constexpr explicit shared_ptr(Y* p)
+	constexpr explicit shared_ptr(Y* ptr)
 	{
-		auto tmp = new control_block_ptr(p);
-		m_data = tmp->m_data;
-		m_count = tmp;
+		auto tmp = new control_block_ptr(ptr);
+		set_values(tmp->m_data, tmp);
 	}
 
-	shared_ptr(shared_ptr&& u) noexcept :
-		m_data(std::exchange(u.m_data, nullptr)), m_count(std::exchange(u.m_count, nullptr))
+	shared_ptr(shared_ptr&& r) noexcept :
+		m_data(std::exchange(r.m_data, nullptr)), m_count(std::exchange(r.m_count, nullptr))
 	{
 	}
 
-	shared_ptr& operator=(shared_ptr&& u) noexcept
+	template <class Y>
+	shared_ptr(shared_ptr<Y>&& r) noexcept :
+		m_data(std::exchange(r.m_data, nullptr)), m_count(std::exchange(r.m_count, nullptr))
+	{
+	}
+
+	shared_ptr& operator=(shared_ptr&& r) noexcept
 	{
 		decrement_and_del_if_last();
 
-		m_data = std::exchange(u.m_data, nullptr);
-		m_count = std::exchange(u.m_count, nullptr);
+		m_data = std::exchange(r.m_data, nullptr);
+		m_count = std::exchange(r.m_count, nullptr);
 		return *this;
 	}
 
-	shared_ptr(const shared_ptr& p) noexcept : m_data(p.m_data), m_count(p.m_count)
+	template <class Y>
+	shared_ptr& operator=(shared_ptr<Y>&& r) noexcept
 	{
-		if (m_count)
-			++(*m_count);
+		decrement_and_del_if_last();
+
+		m_data = std::exchange(r.m_data, nullptr);
+		m_count = std::exchange(r.m_count, nullptr);
+		return *this;
 	}
 
-	shared_ptr& operator=(const shared_ptr& p)
+	shared_ptr(const shared_ptr& r) noexcept : m_data(r.m_data), m_count(r.m_count)
 	{
-		if (this == &p || m_count == p.m_count)
+		inc_count_if_valid();
+	}
+
+	template <class Y>
+	shared_ptr(const shared_ptr<Y>& r) noexcept : m_data(r.get()), m_count(r.m_count)
+	{
+		inc_count_if_valid();
+	}
+
+	shared_ptr& operator=(const shared_ptr& r)
+	{
+		if (m_count == r.m_count)
 			return *this;
 
 		decrement_and_del_if_last();
+		set_values(r.m_data, r.m_count);
+		inc_count_if_valid();
 
-		m_data = p.m_data;
-		m_count = p.m_count;
+		return *this;
+	}
 
-		if (m_count)
-			++(*m_count);
+	template <class Y>
+	shared_ptr& operator=(const shared_ptr<Y>& r) noexcept
+	{
+		if (m_count == r.m_count)
+			return *this;
+
+		decrement_and_del_if_last();
+		set_values(r.m_data, r.m_count);
+		inc_count_if_valid();
 
 		return *this;
 	}
@@ -132,18 +158,45 @@ public:
 	void reset()
 	{
 		decrement_and_del_if_last();
-		m_data = nullptr;
-		m_count = nullptr;
+		set_values(nullptr, nullptr);
 	}
 
-	void reset(T* p)
+	void reset(T* ptr)
 	{
 		decrement_and_del_if_last();
 
-		auto tmp = new control_block_ptr(p);
-		m_data = tmp->m_data;
-		m_count = tmp;
+		auto tmp = new control_block_ptr(ptr);
+		set_values(tmp->m_data, tmp);
 	}
+
+	template <class Y>
+	void reset(Y* ptr)
+	{
+		decrement_and_del_if_last();
+
+		auto tmp = new control_block_ptr(static_cast<T*>(ptr));
+		set_values(tmp->m_data, tmp);
+	}
+
+	void swap(shared_ptr& r) noexcept
+	{
+		T* t_tmp = m_data;
+		m_data = r.m_data;
+		r.m_data = t_tmp;
+
+		ref_counter* ref_tmp = m_count;
+		m_count = r.m_count;
+		r.m_count = ref_tmp;
+	}
+
+	template <class TT>
+	friend void swap(T& a, T& b) noexcept;
+
+	template <class TT, class... Args>
+	friend shared_ptr<TT> make_shared(Args&&... args);
+
+	template <class Y>
+	friend class shared_ptr;
 
 private:
 	void decrement_and_del_if_last()
@@ -157,20 +210,38 @@ private:
 			delete m_count;
 	}
 
+	void inc_count_if_valid()
+	{
+		if (m_count)
+			++(*m_count);
+	}
+
+	void set_values(T* data, ref_counter* count)
+	{
+		m_data = data;
+		m_count = count;
+	}
+
 	T* m_data = nullptr;
 	ref_counter* m_count = nullptr;
 };
 
-template <class T, class... Args>
-shared_ptr<T> make_shared(Args&&... args)
+template <class TT, class... Args>
+shared_ptr<TT> make_shared(Args&&... args)
 {
-	auto tmp = new control_block_object<T>(std::forward<Args>(args)...);
+	auto tmp = new control_block_object<TT>(std::forward<Args>(args)...);
 
-	shared_ptr<T> ptr;
+	shared_ptr<TT> ptr;
 	ptr.m_data = &tmp->m_data;
 	ptr.m_count = tmp;
 
 	return ptr;
+}
+
+template <class TT>
+void swap(TT& a, TT& b) noexcept
+{
+	a.swap(b);
 }
 
 } // namespace simple

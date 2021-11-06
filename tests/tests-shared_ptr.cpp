@@ -2,6 +2,7 @@
 #include "../src/shared_ptr.h"
 
 using simple::shared_ptr;
+using simple::swap;
 
 TEST_CASE("Construct empty shared_ptr", "[construct_empty_shared_ptr]")
 {
@@ -84,4 +85,86 @@ TEST_CASE("shared_ptr self assignment in 2 steps", "[shared_ptr_self_assignment_
 	x_1 = x_2;
 
 	REQUIRE(x_1.use_count() == 2);
+}
+
+class Base
+{
+public:
+	explicit Base(int y) : m_y(y) {}
+
+	int m_y;
+};
+
+class Derived : public Base
+{
+public:
+	explicit Derived(int y) : Base(y) {}
+};
+
+TEST_CASE("Derived class pointer to a base class pointer shared_ptr",
+		  "[derived_pointer_to_base_pointer_shared_ptr]")
+{
+	shared_ptr<Base> x(new Derived(9));
+
+	REQUIRE(x->m_y == 9);
+
+	shared_ptr<Derived> derived(new Derived(8));
+
+	shared_ptr<Base> base = derived;
+
+	REQUIRE(base->m_y == 8);
+
+	shared_ptr<Base> other_base(new Base(9));
+	other_base = std::move(base);
+
+	REQUIRE(other_base->m_y == 8);
+
+	shared_ptr<Derived> third_base(new Derived(8));
+	shared_ptr<Base> forth_base(new Base(18));
+	forth_base = std::move(third_base);
+	REQUIRE(forth_base->m_y == 8);
+
+	shared_ptr<Derived> fifth_base(new Derived(28));
+	shared_ptr<Base> sixth(std::move(fifth_base));
+	REQUIRE(sixth->m_y == 28);
+
+	shared_ptr<Derived> seventh_base(new Derived(39));
+	shared_ptr<Base> eighth;
+	eighth = seventh_base;
+	REQUIRE(eighth->m_y == 39);
+}
+
+TEST_CASE("Reset shared_ptr", "[reset_shared_ptr]")
+{
+	shared_ptr<int> x(new int(5));
+	REQUIRE(*x == 5);
+
+	x.reset(new int(3));
+	REQUIRE(*x == 3);
+
+	x.reset();
+	REQUIRE(x.get() == nullptr);
+
+	shared_ptr<int> x_1(new int(7));
+	REQUIRE(*x_1 == 7);
+
+	shared_ptr<Base> base;
+	base.reset(new Derived(1));
+	REQUIRE(base->m_y == 1);
+}
+
+TEST_CASE("Swap shared_ptr", "[swap_shared_ptr]")
+{
+	shared_ptr<int> x_1(new int(5));
+	shared_ptr<int> x_2(new int(9));
+
+	x_1.swap(x_2);
+
+	REQUIRE(*x_1 == 9);
+	REQUIRE(*x_2 == 5);
+
+	swap(x_2, x_1);
+
+	REQUIRE(*x_1 == 5);
+	REQUIRE(*x_2 == 9);
 }
