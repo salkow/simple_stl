@@ -37,9 +37,7 @@ public:
 	unique_ptr& operator=(unique_ptr<U>&& r) noexcept
 	{
 		unique_ptr<T> tmp(r.release());
-
-		reset(tmp.get());
-		r.m_data = nullptr;
+		reset(tmp.release());
 
 		return *this;
 	}
