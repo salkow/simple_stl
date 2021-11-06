@@ -17,7 +17,7 @@ add_compile_options(-Wall -Wextra -Wpedantic
          -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow
          -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel
          -Wstrict-overflow=2 -Wswitch-default -Wundef -Wno-unused
-		 -g -Og)
+		 -g -O0)
 	 
 file(GLOB_RECURSE TEST_SOURCES tests/*.cpp)
 
