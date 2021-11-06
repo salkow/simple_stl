@@ -116,8 +116,11 @@ TEST_CASE("Derived class pointer to a base class pointer", "[derived_pointer_to_
 
 	unique_ptr<Base> forth_base(new Base(18));
 	forth_base = std::move(third_base);
-
 	REQUIRE(forth_base->m_y == 8);
+
+	unique_ptr<Derived> fifth_base(new Derived(28));
+	unique_ptr<Base> sixth(std::move(fifth_base));
+	REQUIRE(sixth->m_y == 28);
 }
 
 TEST_CASE("make_unique", "[make_unique]")
