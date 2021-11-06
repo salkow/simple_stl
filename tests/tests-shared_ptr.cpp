@@ -1,25 +1,15 @@
 #include "../lib/include/catch2/catch.hpp"
 #include "../src/shared_ptr.h"
 
-#include <string>
-
 using simple::shared_ptr;
-using std::string;
 
 TEST_CASE("Construct empty shared_ptr", "[construct_empty_shared_ptr]")
 {
-	shared_ptr<string> x_1;
+	shared_ptr<int> x_1;
 	REQUIRE(!x_1.get());
 
-	shared_ptr<string> x_2;
+	shared_ptr<int> x_2;
 	REQUIRE(!x_2);
-}
-
-TEST_CASE("Construct shared_ptr", "[construct_shared_ptr]")
-{
-	shared_ptr<string> x(new string("Very very very very long string....."));
-
-	REQUIRE(*x == string("Very very very very long string....."));
 }
 
 TEST_CASE("shared_ptr simple move operations", "[shared_simple_ptr_move_operations]")
@@ -94,23 +84,4 @@ TEST_CASE("shared_ptr self assignment in 2 steps", "[shared_ptr_self_assignment_
 	x_1 = x_2;
 
 	REQUIRE(x_1.use_count() == 2);
-}
-
-TEST_CASE("shared_ptr reset", "[shared_ptr_reset]")
-{
-	shared_ptr<int> x_1;
-	x_1.reset();
-	REQUIRE(!x_1);
-
-	shared_ptr<int> x_2(new int(9));
-	x_2.reset();
-	REQUIRE(!x_2);
-
-	shared_ptr<int> x_3;
-	x_3.reset(new int(8));
-	REQUIRE(*x_3 == 8);
-
-	shared_ptr<int> x_4(new int(7));
-	x_3.reset(new int(8));
-	REQUIRE(*x_3 == 8);
 }
