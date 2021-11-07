@@ -6,103 +6,18 @@
 #include <iterator>
 #include <exception>
 
+#include "iterator.h"
+
 namespace simple
 {
 
 using size_type = std::size_t;
 
-template <typename T>
-class array_iterator
-{
-public:
-	using value_type = T;
-	using pointer = value_type*;
-	using const_pointer = const value_type*;
-	using reference = value_type&;
-	using const_reference = const value_type&;
-	using iterator_category = std::random_access_iterator_tag;
-	using difference_type = std::ptrdiff_t;
-
-	array_iterator() = default;
-	constexpr explicit array_iterator(pointer ptr) : m_ptr(ptr) {}
-
-	constexpr array_iterator& operator++()
-	{
-		m_ptr++;
-		return *this;
-	}
-
-	constexpr array_iterator operator++(int)
-	{
-		array_iterator it(*this);
-		++m_ptr;
-		return it;
-	}
-
-	constexpr array_iterator& operator--()
-	{
-		m_ptr--;
-		return *this;
-	}
-
-	constexpr array_iterator operator--(int)
-	{
-		array_iterator it(*this);
-		--m_ptr;
-		return it;
-	}
-
-	constexpr array_iterator& operator+=(size_type offset)
-	{
-		m_ptr += offset;
-		return *this;
-	}
-
-	constexpr array_iterator& operator-=(size_type offset)
-	{
-		m_ptr -= offset;
-		return *this;
-	}
-
-	constexpr array_iterator operator+(size_type offset) const
-	{
-		array_iterator it(*this);
-		return it += offset;
-	}
-
-	constexpr array_iterator operator-(size_type offset) const
-	{
-		array_iterator it(*this);
-		return it -= offset;
-	}
-
-	difference_type operator-(const array_iterator& other) const { return m_ptr - other.m_ptr; }
-
-	constexpr reference operator[](size_type index) { return *(m_ptr + index); }
-	constexpr const_reference operator[](size_type index) const { return *(m_ptr + index); }
-
-	constexpr pointer operator->() { return m_ptr; }
-	constexpr const_pointer operator->() const { return m_ptr; }
-
-	constexpr reference operator*() { return *m_ptr; }
-	constexpr const_reference operator*() const { return *m_ptr; }
-
-	constexpr bool operator==(const array_iterator& other) const { return m_ptr == other.m_ptr; }
-	constexpr bool operator!=(const array_iterator& other) const { return m_ptr != other.m_ptr; }
-	constexpr bool operator<(const array_iterator& other) const { return m_ptr < other.m_ptr; }
-	constexpr bool operator<=(const array_iterator& other) const { return m_ptr <= other.m_ptr; }
-	constexpr bool operator>(const array_iterator& other) const { return m_ptr > other.m_ptr; }
-	constexpr bool operator>=(const array_iterator& other) const { return m_ptr >= other.m_ptr; }
-
-private:
-	pointer m_ptr = nullptr;
-};
-
 template <class T, size_type N>
 struct array
 {
 	using value_type = T;
-	using iterator = array_iterator<T>;
+	using iterator = random_access_iterator<T>;
 	using pointer = value_type*;
 	using reference = value_type&;
 	using const_reference = const value_type&;
@@ -163,7 +78,7 @@ template <class T>
 struct array<T, 0>
 {
 	using value_type = T;
-	using iterator = array_iterator<T>;
+	using iterator = random_access_iterator<T>;
 	using pointer = value_type*;
 	using reference = value_type&;
 	using const_reference = const value_type&;

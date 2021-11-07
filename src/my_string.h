@@ -6,102 +6,18 @@
 #include <exception>
 #include <iostream>
 
+#include "iterator.h"
+
 namespace simple
 {
 using size_type = std::size_t;
 constexpr std::size_t CAPACITY_INCREASE_FACTOR = 2;
 
-class string_iterator
-{
-public:
-	using value_type = char;
-	using pointer = value_type*;
-	using const_pointer = const value_type*;
-	using reference = value_type&;
-	using const_reference = const value_type&;
-	using iterator_category = std::random_access_iterator_tag;
-	using difference_type = std::ptrdiff_t;
-
-	string_iterator() = default;
-	constexpr explicit string_iterator(pointer ptr) : m_ptr(ptr) {}
-
-	constexpr string_iterator& operator++()
-	{
-		m_ptr++;
-		return *this;
-	}
-
-	constexpr string_iterator operator++(int)
-	{
-		string_iterator it(*this);
-		++m_ptr;
-		return it;
-	}
-
-	constexpr string_iterator& operator--()
-	{
-		m_ptr--;
-		return *this;
-	}
-
-	constexpr string_iterator operator--(int)
-	{
-		string_iterator it(*this);
-		--m_ptr;
-		return it;
-	}
-
-	constexpr string_iterator& operator+=(size_type offset)
-	{
-		m_ptr += offset;
-		return *this;
-	}
-
-	constexpr string_iterator& operator-=(size_type offset)
-	{
-		m_ptr -= offset;
-		return *this;
-	}
-
-	constexpr string_iterator operator+(size_type offset) const
-	{
-		string_iterator it(*this);
-		return it += offset;
-	}
-
-	constexpr string_iterator operator-(size_type offset) const
-	{
-		string_iterator it(*this);
-		return it -= offset;
-	}
-
-	difference_type operator-(const string_iterator& other) const { return m_ptr - other.m_ptr; }
-
-	constexpr reference operator[](size_type index) { return *(m_ptr + index); }
-	constexpr const_reference operator[](size_type index) const { return *(m_ptr + index); }
-
-	constexpr pointer operator->() { return m_ptr; }
-	constexpr const_pointer operator->() const { return m_ptr; }
-
-	constexpr reference operator*() { return *m_ptr; }
-	constexpr const_reference operator*() const { return *m_ptr; }
-
-	constexpr bool operator==(const string_iterator& other) const { return m_ptr == other.m_ptr; }
-	constexpr bool operator!=(const string_iterator& other) const { return m_ptr != other.m_ptr; }
-	constexpr bool operator<(const string_iterator& other) const { return m_ptr < other.m_ptr; }
-	constexpr bool operator<=(const string_iterator& other) const { return m_ptr <= other.m_ptr; }
-	constexpr bool operator>(const string_iterator& other) const { return m_ptr > other.m_ptr; }
-	constexpr bool operator>=(const string_iterator& other) const { return m_ptr >= other.m_ptr; }
-
-private:
-	pointer m_ptr = nullptr;
-};
-
 class string
 {
 public:
 	using value_type = char;
-	using iterator = string_iterator;
+	using iterator = random_access_iterator<char>;
 	using pointer = value_type*;
 	using reference = value_type&;
 	using const_reference = const value_type&;
@@ -162,13 +78,13 @@ public:
 	[[nodiscard]] constexpr size_type size() const { return m_size; }
 	[[nodiscard]] constexpr size_type length() const { return m_size; }
 
-	[[nodiscard]] constexpr iterator begin() noexcept { return iterator(m_elem); }
-	[[nodiscard]] constexpr iterator begin() const noexcept { return iterator(m_elem); }
-	[[nodiscard]] constexpr iterator cbegin() const noexcept { return iterator(m_elem); }
+	[[nodiscard]] iterator begin() noexcept { return iterator(m_elem); }
+	[[nodiscard]] iterator begin() const noexcept { return iterator(m_elem); }
+	[[nodiscard]] iterator cbegin() const noexcept { return iterator(m_elem); }
 
-	[[nodiscard]] constexpr iterator end() noexcept { return iterator(m_elem + m_size); }
-	[[nodiscard]] constexpr iterator end() const noexcept { return iterator(m_elem + m_size); }
-	[[nodiscard]] constexpr iterator cend() const noexcept { return iterator(m_elem + m_size); }
+	[[nodiscard]] iterator end() noexcept { return iterator(m_elem + m_size); }
+	[[nodiscard]] iterator end() const noexcept { return iterator(m_elem + m_size); }
+	[[nodiscard]] iterator cend() const noexcept { return iterator(m_elem + m_size); }
 
 	[[nodiscard]] constexpr reference front() noexcept { return m_elem[0]; }
 	[[nodiscard]] constexpr const_reference front() const noexcept { return m_elem[0]; }
