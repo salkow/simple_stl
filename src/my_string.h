@@ -103,7 +103,6 @@ public:
 	using value_type = char;
 	using iterator = string_iterator;
 	using pointer = value_type*;
-	using const_pointer = const pointer;
 	using reference = value_type&;
 	using const_reference = const value_type&;
 	using iterator_category = std::random_access_iterator_tag;
@@ -248,7 +247,7 @@ public:
 	void push_back(char ch)
 	{
 		if (m_size == m_capacity)
-			reallocate(get_increased_capacity() + 1);
+			reallocate(get_increased_capacity());
 
 		m_elem[m_size] = ch;
 		m_size++;

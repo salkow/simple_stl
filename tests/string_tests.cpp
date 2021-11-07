@@ -85,15 +85,23 @@ TEST_CASE("c_str", "[c_str]")
 
 TEST_CASE("push_pop_back", "[push_pop_back]")
 {
-	string x = "car";
+	string x;
+	x.push_back('a');
 
-	x.push_back('s');
-	REQUIRE(x == "cars");
-	REQUIRE(x.size() == 4);
+	REQUIRE(x == "a");
+
+	x.push_back('b');
+	REQUIRE(x == "ab");
+
+	x.reserve(3);
+
+	x.push_back('c');
+
+	REQUIRE(x == "abc");
 
 	x.pop_back();
-	REQUIRE(x == "car");
-	REQUIRE(x.size() == 3);
+
+	REQUIRE(x == "ab");
 }
 
 TEST_CASE("clear string", "[clear_string]")
