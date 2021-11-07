@@ -18,6 +18,7 @@ struct array
 {
 	using value_type = T;
 	using iterator = random_access_iterator<T>;
+	using const_iterator = random_access_iterator<const T>;
 	using pointer = value_type*;
 	using reference = value_type&;
 	using const_reference = const value_type&;

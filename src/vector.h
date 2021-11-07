@@ -20,6 +20,7 @@ class vector
 public:
 	using value_type = T;
 	using iterator = random_access_iterator<T>;
+	using const_iterator = random_access_iterator<const T>;
 	using pointer = T*;
 	using const_pointer = T const*;
 	using reference = value_type&;
@@ -161,11 +162,17 @@ public:
 
 	[[nodiscard]] constexpr iterator begin() noexcept { return iterator(m_elements); }
 	[[nodiscard]] constexpr iterator begin() const noexcept { return iterator(m_elements); }
-	[[nodiscard]] constexpr iterator cbegin() const noexcept { return iterator(m_elements); }
+	[[nodiscard]] constexpr const_iterator cbegin() const noexcept
+	{
+		return const_iterator(m_elements);
+	}
 
 	[[nodiscard]] constexpr iterator end() noexcept { return iterator(m_elements + m_size); }
 	[[nodiscard]] constexpr iterator end() const noexcept { return iterator(m_elements + m_size); }
-	[[nodiscard]] constexpr iterator cend() const noexcept { return iterator(m_elements + m_size); }
+	[[nodiscard]] constexpr const_iterator cend() const noexcept
+	{
+		return const_iterator(m_elements + m_size);
+	}
 
 	[[nodiscard]] constexpr reference front() noexcept { return m_elements[0]; }
 	[[nodiscard]] constexpr const_reference front() const noexcept { return m_elements[0]; }
