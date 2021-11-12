@@ -26,16 +26,18 @@ public:
 	using reference = value_type&;
 	using const_reference = value_type const&;
 
+	vector() = default;
+
 	explicit vector(size_type num_of_elements, const T& value)
 	{
-		reallocate(num_of_elements);
+		fit(num_of_elements);
 		for (size_type i = 0; i < num_of_elements; ++i)
 			emplace_back(value);
 	}
 
 	explicit vector(size_type num_of_elements)
 	{
-		reallocate(num_of_elements);
+		fit(num_of_elements);
 		for (size_type i = 0; i < num_of_elements; ++i)
 			emplace_back(T());
 	}
@@ -113,7 +115,7 @@ public:
 		other.m_size = tmp_size_type;
 	}
 
-	friend void swap(vector& a, vector& b) { a.swap(b); }
+	friend void swap(vector& a, vector& b) noexcept { a.swap(b); }
 
 	void reserve(size_type new_cap)
 	{
@@ -192,6 +194,12 @@ private:
 		::operator delete(m_elements);
 
 		m_elements = new_block;
+		m_capacity = new_cap;
+	}
+
+	void fit(size_type new_cap)
+	{
+		m_elements = allocate_new_blocks(new_cap);
 		m_capacity = new_cap;
 	}
 
