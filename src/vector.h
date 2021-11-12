@@ -26,29 +26,27 @@ public:
 	using reference = value_type&;
 	using const_reference = value_type const&;
 
-	constexpr explicit vector() = default;
-
-	constexpr explicit vector(size_type num_of_elements, const T& value)
+	explicit vector(size_type num_of_elements, const T& value)
 	{
 		reallocate(num_of_elements);
 		for (size_type i = 0; i < num_of_elements; ++i)
 			emplace_back(value);
 	}
 
-	constexpr explicit vector(size_type num_of_elements)
+	explicit vector(size_type num_of_elements)
 	{
 		reallocate(num_of_elements);
 		for (size_type i = 0; i < num_of_elements; ++i)
 			emplace_back(T());
 	}
 
-	constexpr vector(vector&& other) noexcept :
+	vector(vector&& other) noexcept :
 		m_elements(std::exchange(other.m_elements, nullptr)),
 		m_capacity(std::exchange(other.m_capacity, 0)), m_size(std::exchange(other.m_size, 0))
 	{
 	}
 
-	constexpr vector(vector const& other) { copy(other); }
+	vector(vector const& other) { copy(other); }
 
 	~vector()
 	{
@@ -56,30 +54,13 @@ public:
 		::operator delete(m_elements);
 	}
 
-	constexpr vector& operator=(vector const& other)
+	vector& operator=(vector other)
 	{
-		if (this == &other)
-			return *this;
-
-		destruct_elements();
-
-		copy(other);
+		other.swap(*this);
 		return *this;
 	}
 
-	constexpr vector& operator=(vector&& other) noexcept
-	{
-		destruct_elements();
-		::operator delete(m_elements);
-
-		m_elements = std::exchange(other.m_elements, nullptr);
-		m_capacity = std::exchange(other.m_capacity, 0);
-		m_size = std::exchange(other.m_size, 0);
-
-		return *this;
-	}
-
-	constexpr bool operator==(vector const& other) const
+	bool operator==(vector const& other) const
 	{
 		if (m_size != other.m_size)
 			return false;
@@ -96,12 +77,12 @@ public:
 		return true;
 	}
 
-	constexpr bool operator!=(vector const& other) const { return !(*this == other); }
+	bool operator!=(vector const& other) const { return !(*this == other); }
 
-	constexpr reference operator[](size_type pos) noexcept { return m_elements[pos]; }
-	constexpr const_reference operator[](size_type pos) const noexcept { return m_elements[pos]; }
+	reference operator[](size_type pos) noexcept { return m_elements[pos]; }
+	const_reference operator[](size_type pos) const noexcept { return m_elements[pos]; }
 
-	[[nodiscard]] constexpr reference at(size_type pos)
+	[[nodiscard]] reference at(size_type pos)
 	{
 		if (pos < m_size)
 			return m_elements[pos];
@@ -109,7 +90,7 @@ public:
 		throw std::out_of_range("Index out of range");
 	}
 
-	[[nodiscard]] constexpr const_reference at(size_type pos) const
+	[[nodiscard]] const_reference at(size_type pos) const
 	{
 		if (pos < m_size)
 			return m_elements[pos];
@@ -117,18 +98,35 @@ public:
 		throw std::out_of_range("Index out of range");
 	}
 
-	constexpr void reserve(size_type new_cap)
+	void swap(vector& other) noexcept
+	{
+		T* tmp_m_elements = m_elements;
+		m_elements = other.m_elements;
+		other.m_elements = tmp_m_elements;
+
+		size_type tmp_size_type = m_capacity;
+		m_capacity = other.m_capacity;
+		other.m_capacity = tmp_size_type;
+
+		tmp_size_type = m_size;
+		m_size = other.m_size;
+		other.m_size = tmp_size_type;
+	}
+
+	friend void swap(vector& a, vector& b) { a.swap(b); }
+
+	void reserve(size_type new_cap)
 	{
 		if (m_capacity < new_cap)
 			reallocate(new_cap);
 	}
 
-	constexpr void push_back(const T& value) { emplace_back(value); }
+	void push_back(const T& value) { emplace_back(value); }
 
-	constexpr void push_back(T&& value) { emplace_back(std::move(value)); }
+	void push_back(T&& value) { emplace_back(std::move(value)); }
 
 	template <class... Args>
-	constexpr reference emplace_back(Args&&... args)
+	reference emplace_back(Args&&... args)
 	{
 		if (m_size == m_capacity)
 			reallocate(get_increased_capacity());
@@ -138,7 +136,7 @@ public:
 		return m_elements[m_size++];
 	}
 
-	constexpr void insert(iterator first, iterator last)
+	void insert(iterator first, iterator last)
 	{
 		size_type new_capacity = static_cast<size_type>(last - first) + m_size;
 
@@ -148,47 +146,44 @@ public:
 			emplace_back(*first);
 	}
 
-	constexpr void pop_back() noexcept
+	void pop_back() noexcept
 	{
 		--m_size;
 		m_elements[m_size].~T();
 	}
 
-	constexpr void clear() noexcept
+	void clear() noexcept
 	{
 		destruct_elements();
 		m_size = 0;
 	}
 
-	[[nodiscard]] constexpr iterator begin() noexcept { return iterator(m_elements); }
-	[[nodiscard]] constexpr iterator begin() const noexcept { return iterator(m_elements); }
-	[[nodiscard]] constexpr const_iterator cbegin() const noexcept
-	{
-		return const_iterator(m_elements);
-	}
+	[[nodiscard]] iterator begin() noexcept { return iterator(m_elements); }
+	[[nodiscard]] iterator begin() const noexcept { return iterator(m_elements); }
+	[[nodiscard]] const_iterator cbegin() const noexcept { return const_iterator(m_elements); }
 
-	[[nodiscard]] constexpr iterator end() noexcept { return iterator(m_elements + m_size); }
-	[[nodiscard]] constexpr iterator end() const noexcept { return iterator(m_elements + m_size); }
-	[[nodiscard]] constexpr const_iterator cend() const noexcept
+	[[nodiscard]] iterator end() noexcept { return iterator(m_elements + m_size); }
+	[[nodiscard]] iterator end() const noexcept { return iterator(m_elements + m_size); }
+	[[nodiscard]] const_iterator cend() const noexcept
 	{
 		return const_iterator(m_elements + m_size);
 	}
 
-	[[nodiscard]] constexpr reference front() noexcept { return m_elements[0]; }
-	[[nodiscard]] constexpr const_reference front() const noexcept { return m_elements[0]; }
+	[[nodiscard]] reference front() noexcept { return m_elements[0]; }
+	[[nodiscard]] const_reference front() const noexcept { return m_elements[0]; }
 
-	[[nodiscard]] constexpr reference back() noexcept { return m_elements[m_size - 1]; }
-	[[nodiscard]] constexpr const_reference back() const noexcept { return m_elements[m_size - 1]; }
+	[[nodiscard]] reference back() noexcept { return m_elements[m_size - 1]; }
+	[[nodiscard]] const_reference back() const noexcept { return m_elements[m_size - 1]; }
 
-	[[nodiscard]] constexpr pointer data() noexcept { return m_elements; }
-	[[nodiscard]] constexpr const_pointer data() const noexcept { return m_elements; }
+	[[nodiscard]] pointer data() noexcept { return m_elements; }
+	[[nodiscard]] const_pointer data() const noexcept { return m_elements; }
 
-	[[nodiscard]] constexpr size_type size() const noexcept { return m_size; }
-	[[nodiscard]] constexpr size_type capacity() const noexcept { return m_capacity; }
-	[[nodiscard]] constexpr size_type empty() const noexcept { return m_size == 0; }
+	[[nodiscard]] size_type size() const noexcept { return m_size; }
+	[[nodiscard]] size_type capacity() const noexcept { return m_capacity; }
+	[[nodiscard]] size_type empty() const noexcept { return m_size == 0; }
 
 private:
-	constexpr void reallocate(size_type new_cap)
+	void reallocate(size_type new_cap)
 	{
 		T* new_block = allocate_new_blocks(new_cap);
 		transfer_items_to_new_block(new_block);
@@ -200,9 +195,9 @@ private:
 		m_capacity = new_cap;
 	}
 
-	constexpr void transfer_items_to_new_block(T* new_block)
+	void transfer_items_to_new_block(T* new_block)
 	{
-		if constexpr (std::is_nothrow_move_constructible_v<T>)
+		if (std::is_nothrow_move_constructible_v<T>)
 		{
 			for (size_type i = 0; i < m_size; ++i)
 				new (&new_block[i]) T(std::move(m_elements[i]));
@@ -215,7 +210,7 @@ private:
 		}
 	}
 
-	constexpr void copy(vector const& other)
+	void copy(vector const& other)
 	{
 		if (m_capacity < other.m_size)
 		{
@@ -230,21 +225,21 @@ private:
 			new (&m_elements[i]) T(other.m_elements[i]);
 	}
 
-	constexpr void destruct_elements() const
+	void destruct_elements() const
 	{
-		if constexpr (!std::is_trivially_destructible_v<T>)
+		if (!std::is_trivially_destructible_v<T>)
 		{
 			for (auto& i : *this)
 				i.~T();
 		}
 	}
 
-	[[nodiscard]] constexpr size_type get_increased_capacity() const
+	[[nodiscard]] size_type get_increased_capacity() const
 	{
 		return m_capacity * CAPACITY_INCREASE_FACTOR + 1;
 	}
 
-	[[nodiscard]] constexpr T* allocate_new_blocks(size_type size) const
+	[[nodiscard]] T* allocate_new_blocks(size_type size) const
 	{
 		return static_cast<T*>(::operator new(sizeof(T) * size));
 	}
