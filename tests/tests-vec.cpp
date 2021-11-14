@@ -5,7 +5,7 @@
 
 using simple::vector;
 
-TEST_CASE("Check if a new vector is empty.", "[empty_vector_empty]")
+TEST_CASE("Check if a new vector is empty.", "[empty_vector]")
 {
 	vector<int> empty_vector;
 
@@ -144,7 +144,7 @@ TEST_CASE("Vector of long strings", "[vector_of_long_strings]")
 	std::string s_1("This is a really really long string.");
 	std::string s_2("This is another really really really long string.");
 
-	vector<std::string>	vec;
+	vector<std::string> vec;
 
 	vec.push_back(s_1);
 	vec.push_back(s_2);
@@ -158,4 +158,18 @@ TEST_CASE("Vector of long strings", "[vector_of_long_strings]")
 
 	REQUIRE(vec[0] != s_1);
 	REQUIRE(vec[0] != s_2);
+}
+
+TEST_CASE("Add many items vector", "[many_items_to_vector]")
+{
+	vector<int> vec;
+
+	for (int i = 0; i < 10000; i++)
+		vec.emplace_back(i);
+
+	REQUIRE(vec.size() == 10000);
+
+	REQUIRE(vec[0] == 0);
+	REQUIRE(vec[9999] == 9999);
+	REQUIRE(vec[5821] == 5821);
 }
