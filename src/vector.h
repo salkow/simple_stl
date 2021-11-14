@@ -11,12 +11,11 @@
 namespace simple
 {
 
-constexpr std::size_t CAPACITY_INCREASE_FACTOR = 2;
-using size_type = std::size_t;
-
 template <class T>
 class vector
 {
+	const std::size_t CAPACITY_INCREASE_FACTOR = 2;
+
 public:
 	using value_type = T;
 	using iterator = random_access_iterator<T>;
@@ -25,10 +24,11 @@ public:
 	using const_pointer = T const*;
 	using reference = value_type&;
 	using const_reference = value_type const&;
+	using size_type = std::size_t;
 
 	vector() = default;
 
-	explicit vector(size_type num_of_elements, const T& value)
+	vector(size_type num_of_elements, const T& value)
 	{
 		fit(num_of_elements);
 		for (size_type i = 0; i < num_of_elements; ++i)
@@ -48,7 +48,20 @@ public:
 	{
 	}
 
-	vector(vector const& other) { copy(other); }
+	vector(vector const& other)
+	{
+		if (m_capacity < other.m_size)
+		{
+			::operator delete(m_elements);
+			m_elements = allocate_new_blocks(other.m_size);
+			m_capacity = other.m_size;
+		}
+
+		m_size = other.m_size;
+
+		for (size_type i = 0; i < m_size; ++i)
+			new (&m_elements[i]) T(other.m_elements[i]);
+	}
 
 	~vector()
 	{
@@ -205,7 +218,7 @@ private:
 
 	void transfer_items_to_new_block(T* new_block)
 	{
-		if (std::is_nothrow_move_constructible_v<T>)
+		if constexpr (std::is_nothrow_move_constructible_v<T>)
 		{
 			for (size_type i = 0; i < m_size; ++i)
 				new (&new_block[i]) T(std::move(m_elements[i]));
@@ -218,24 +231,9 @@ private:
 		}
 	}
 
-	void copy(vector const& other)
-	{
-		if (m_capacity < other.m_size)
-		{
-			::operator delete(m_elements);
-			m_elements = allocate_new_blocks(other.m_size);
-			m_capacity = other.m_size;
-		}
-
-		m_size = other.m_size;
-
-		for (size_type i = 0; i < m_size; ++i)
-			new (&m_elements[i]) T(other.m_elements[i]);
-	}
-
 	void destruct_elements() const
 	{
-		if (!std::is_trivially_destructible_v<T>)
+		if constexpr (!std::is_trivially_destructible_v<T>)
 		{
 			for (auto& i : *this)
 				i.~T();
