@@ -48,17 +48,10 @@ public:
 	{
 	}
 
-	vector(vector const& other)
+	vector(vector const& other) :
+		m_elements(allocate_new_blocks(other.m_size)), m_capacity(other.m_size),
+		m_size(other.m_size)
 	{
-		if (m_capacity < other.m_size)
-		{
-			::operator delete(m_elements);
-			m_elements = allocate_new_blocks(other.m_size);
-			m_capacity = other.m_size;
-		}
-
-		m_size = other.m_size;
-
 		for (size_type i = 0; i < m_size; ++i)
 			new (&m_elements[i]) T(other.m_elements[i]);
 	}

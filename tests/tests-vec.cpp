@@ -173,3 +173,11 @@ TEST_CASE("Add many items vector", "[many_items_to_vector]")
 	REQUIRE(vec[9999] == 9999);
 	REQUIRE(vec[5821] == 5821);
 }
+
+TEST_CASE("Copy construct empty vector", "[copy_construct_empty_vector]")
+{
+	vector<int> vec1;
+	vector<int> vec2 = vec1;
+
+	REQUIRE(vec2.size() == 0);
+}
