@@ -18,7 +18,7 @@ public:
 	using difference_type = std::ptrdiff_t;
 
 	my_iterator() = default;
-	explicit my_iterator(T* ptr) : m_ptr(reinterpret_cast<pointer>(ptr)) {}
+	explicit my_iterator(T* ptr) : m_ptr(ptr) {}
 
 	my_iterator& operator++()
 	{
@@ -76,7 +76,7 @@ class forward_iterator : public my_iterator<T, Const>
 public:
 	using pointer = typename my_iterator<T, Const>::pointer;
 	forward_iterator() = default;
-	explicit forward_iterator(T* ptr) : my_iterator<T, Const>(reinterpret_cast<pointer>(ptr)) {}
+	explicit forward_iterator(T* ptr) : my_iterator<T, Const>(ptr) {}
 };
 
 template <typename T, bool Const = false>
@@ -88,10 +88,7 @@ public:
 	using difference_type = typename my_iterator<T, Const>::difference_type;
 
 	random_access_iterator() = default;
-	explicit random_access_iterator(T* ptr) :
-		forward_iterator<T, Const>(reinterpret_cast<pointer>(ptr))
-	{
-	}
+	explicit random_access_iterator(T* ptr) : forward_iterator<T, Const>(ptr) {}
 
 	random_access_iterator& operator--()
 	{
