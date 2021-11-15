@@ -181,3 +181,19 @@ TEST_CASE("Copy construct empty vector", "[copy_construct_empty_vector]")
 
 	REQUIRE(vec2.size() == 0);
 }
+
+TEST_CASE("Copy vector")
+{
+	vector<int> vec_1;
+	vec_1.emplace_back(3);
+	vec_1.emplace_back(2);
+
+	vector<int> vec_2 = vec_1;
+
+	REQUIRE(vec_1 == vec_2);
+
+	vector<int> vec_3;
+	vec_3 = vec_1;
+
+	REQUIRE(vec_1 == vec_3);
+}
