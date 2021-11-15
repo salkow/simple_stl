@@ -19,7 +19,7 @@ class vector
 public:
 	using value_type = T;
 	using iterator = random_access_iterator<T>;
-	using const_iterator = random_access_iterator<const T>;
+	using const_iterator = random_access_iterator<T, true>;
 	using pointer = T*;
 	using const_pointer = T const*;
 	using reference = value_type&;
@@ -166,11 +166,9 @@ public:
 		m_size = 0;
 	}
 
-	[[nodiscard]] iterator begin() noexcept { return iterator(m_elements); }
 	[[nodiscard]] iterator begin() const noexcept { return iterator(m_elements); }
 	[[nodiscard]] const_iterator cbegin() const noexcept { return const_iterator(m_elements); }
 
-	[[nodiscard]] iterator end() noexcept { return iterator(m_elements + m_size); }
 	[[nodiscard]] iterator end() const noexcept { return iterator(m_elements + m_size); }
 	[[nodiscard]] const_iterator cend() const noexcept
 	{

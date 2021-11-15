@@ -8,19 +8,17 @@ namespace simple
 {
 using size_type = std::size_t;
 
-template <typename T>
+template <typename T, bool Const = false>
 class my_iterator
 {
 public:
 	using value_type = T;
-	using pointer = value_type*;
-	using const_pointer = const value_type*;
-	using reference = value_type&;
-	using const_reference = const value_type&;
+	using reference = typename std::conditional_t<Const, value_type const&, value_type&>;
+	using pointer = typename std::conditional_t<Const, value_type const*, value_type*>;
 	using difference_type = std::ptrdiff_t;
 
 	my_iterator() = default;
-	explicit my_iterator(pointer ptr) : m_ptr(ptr) {}
+	explicit my_iterator(T* ptr) : m_ptr(reinterpret_cast<pointer>(ptr)) {}
 
 	my_iterator& operator++()
 	{
@@ -44,30 +42,54 @@ public:
 		return lhs.m_ptr != rhs.m_ptr;
 	}
 
-	pointer operator->() { return m_ptr; }
-	const_pointer operator->() const { return m_ptr; }
+	template <bool Const_ = Const>
+	std::enable_if_t<Const_, pointer> operator->() const
+	{
+		return m_ptr;
+	}
 
-	reference operator*() { return *m_ptr; }
-	const_reference operator*() const { return *m_ptr; }
+	template <bool Const_ = Const>
+	std::enable_if_t<!Const_, pointer> operator->()
+	{
+		return m_ptr;
+	}
+
+	template <bool Const_ = Const>
+	std::enable_if_t<Const_, reference> operator*() const
+	{
+		return *m_ptr;
+	}
+
+	template <bool Const_ = Const>
+	std::enable_if_t<!Const_, reference> operator*()
+	{
+		return *m_ptr;
+	}
 
 protected:
 	T* m_ptr = nullptr;
 };
 
-template <typename T>
-class forward_iterator : public my_iterator<T>
+template <typename T, bool Const = false>
+class forward_iterator : public my_iterator<T, Const>
 {
 public:
+	using pointer = typename my_iterator<T, Const>::pointer;
 	forward_iterator() = default;
-	explicit forward_iterator(typename my_iterator<T>::pointer ptr) : my_iterator<T>(ptr) {}
+	explicit forward_iterator(T* ptr) : my_iterator<T, Const>(reinterpret_cast<pointer>(ptr)) {}
 };
 
-template <typename T>
-class random_access_iterator : public forward_iterator<T>
+template <typename T, bool Const = false>
+class random_access_iterator : public forward_iterator<T, Const>
 {
 public:
+	using pointer = typename my_iterator<T, Const>::pointer;
+	using reference = typename my_iterator<T, Const>::reference;
+	using difference_type = typename my_iterator<T, Const>::difference_type;
+
 	random_access_iterator() = default;
-	explicit random_access_iterator(typename my_iterator<T>::pointer ptr) : forward_iterator<T>(ptr)
+	explicit random_access_iterator(T* ptr) :
+		forward_iterator<T, Const>(reinterpret_cast<pointer>(ptr))
 	{
 	}
 
@@ -128,21 +150,15 @@ public:
 		return new_it -= offset;
 	}
 
-	friend typename my_iterator<T>::difference_type operator-(const random_access_iterator& lhs,
-															  const random_access_iterator& rhs)
+	friend difference_type operator-(const random_access_iterator& lhs,
+									 const random_access_iterator& rhs)
 	{
 		return lhs.m_ptr - rhs.m_ptr;
 	}
 
-	typename my_iterator<T>::reference operator[](size_type index)
-	{
-		return *(this->m_ptr + index);
-	}
+	reference operator[](size_type index) { return *(this->m_ptr + index); }
 
-	typename my_iterator<T>::const_reference operator[](size_type index) const
-	{
-		return *(this->m_ptr + index);
-	}
+	reference operator[](size_type index) const { return *(this->m_ptr + index); }
 };
 
 } // namespace simple

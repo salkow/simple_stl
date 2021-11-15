@@ -17,7 +17,7 @@ class string
 {
 public:
 	using value_type = char;
-	using iterator = random_access_iterator<char>;
+	using iterator = random_access_iterator<value_type>;
 	using pointer = value_type*;
 	using reference = value_type&;
 	using const_reference = const value_type&;
@@ -78,13 +78,9 @@ public:
 	[[nodiscard]] constexpr size_type size() const { return m_size; }
 	[[nodiscard]] constexpr size_type length() const { return m_size; }
 
-	[[nodiscard]] iterator begin() noexcept { return iterator(m_elem); }
 	[[nodiscard]] iterator begin() const noexcept { return iterator(m_elem); }
-	[[nodiscard]] iterator cbegin() const noexcept { return iterator(m_elem); }
 
-	[[nodiscard]] iterator end() noexcept { return iterator(m_elem + m_size); }
 	[[nodiscard]] iterator end() const noexcept { return iterator(m_elem + m_size); }
-	[[nodiscard]] iterator cend() const noexcept { return iterator(m_elem + m_size); }
 
 	[[nodiscard]] constexpr reference front() noexcept { return m_elem[0]; }
 	[[nodiscard]] constexpr const_reference front() const noexcept { return m_elem[0]; }
