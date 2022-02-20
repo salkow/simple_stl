@@ -1,7 +1,7 @@
 #include "../lib/include/catch2/catch.hpp"
 #include "../src/array.h"
 
-using simple::array;
+using bud::array;
 
 TEST_CASE("Empty array", "[empty_array")
 {
@@ -10,11 +10,9 @@ TEST_CASE("Empty array", "[empty_array")
 	REQUIRE(arr.empty());
 	REQUIRE(arr.size() == 0);
 
-	REQUIRE(arr[100] == arr[200]);
-
 	REQUIRE(arr.begin() == arr.end());
 
-	REQUIRE(arr.front() == arr.back());
+	/* REQUIRE(arr.front() == arr.back()); */
 
 	REQUIRE(arr.data() == nullptr);
 }
@@ -98,9 +96,6 @@ TEST_CASE("Iterators array", "[iterators_array]")
 	REQUIRE(arr[2] == 6);
 
 	REQUIRE(arr.begin() < arr.end());
-
-	my_it = arr.begin();
-
 	REQUIRE(arr.begin() + 3 == arr.end());
 	REQUIRE(arr.begin() + 2 == arr.end() - 1);
 }

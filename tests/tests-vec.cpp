@@ -1,9 +1,10 @@
+
 #include "../lib/include/catch2/catch.hpp"
 #include "../src/vector.h"
+#include "../src/my_string.h"
 
-#include <string>
-
-using simple::vector;
+using bud::string;
+using bud::vector;
 
 TEST_CASE("Check if a new vector is empty.", "[empty_vector]")
 {
@@ -139,27 +140,6 @@ TEST_CASE("Test iterators in vector.", "[test_iterators_vector]")
 	REQUIRE(sum == 21);
 }
 
-TEST_CASE("Vector of long strings", "[vector_of_long_strings]")
-{
-	std::string s_1("This is a really really long string.");
-	std::string s_2("This is another really really really long string.");
-
-	vector<std::string> vec;
-
-	vec.push_back(s_1);
-	vec.push_back(s_2);
-
-	REQUIRE(vec[0] == s_1);
-	REQUIRE(vec[1] == s_2);
-
-	vec.clear();
-
-	vec.emplace_back("This is the last really really really long string.");
-
-	REQUIRE(vec[0] != s_1);
-	REQUIRE(vec[0] != s_2);
-}
-
 TEST_CASE("Add many items vector", "[many_items_to_vector]")
 {
 	vector<int> vec;
@@ -196,4 +176,42 @@ TEST_CASE("Copy vector")
 	vec_3 = vec_1;
 
 	REQUIRE(vec_1 == vec_3);
+}
+
+TEST_CASE("Erase element vector", "[erase_element_vector]")
+{
+	vector<bud::string> vec_1;
+	vec_1.emplace_back("1");
+	vec_1.emplace_back("2");
+	vec_1.emplace_back("3");
+
+	auto result_it = vec_1.erase(vec_1.begin() + 1);
+	REQUIRE(result_it == vec_1.begin() + 1);
+
+	REQUIRE(vec_1[0] == "1");
+	REQUIRE(vec_1[1] == "3");
+
+	REQUIRE(vec_1.size() == 2);
+
+	auto vec_2 = vec_1;
+
+	result_it = vec_1.erase(vec_1.begin());
+	REQUIRE(result_it == vec_1.begin());
+
+	REQUIRE(vec_1[0] == "3");
+
+	REQUIRE(vec_1.size() == 1);
+
+	result_it = vec_2.erase(vec_2.begin() + 1);
+	REQUIRE(result_it == vec_2.begin() + 1);
+
+	REQUIRE(vec_2[0] == "1");
+
+	REQUIRE(vec_2.size() == 1);
+
+	result_it = vec_1.erase(vec_1.begin());
+	REQUIRE(result_it == vec_1.begin());
+	REQUIRE(result_it == vec_1.end());
+
+	REQUIRE(vec_1.empty());
 }

@@ -1,7 +1,7 @@
 #include "../lib/include/catch2/catch.hpp"
 #include "../src/my_string.h"
 
-using simple::string;
+using bud::string;
 
 TEST_CASE("Fill a string", "[fill_string]")
 {
@@ -128,4 +128,13 @@ TEST_CASE("Iterators string", "[iterators_string]")
 
 	it++;
 	REQUIRE(it == x.end());
+}
+
+TEST_CASE("string from char* and size", "string_from_char_pointer_and_size")
+{
+	char a[] = "1234";
+
+	string a_str(a, strlen(a));
+
+	REQUIRE(a_str == a);
 }

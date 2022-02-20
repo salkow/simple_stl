@@ -3,8 +3,8 @@
 
 #include <utility>
 
-using simple::make_unique;
-using simple::unique_ptr;
+using bud::make_unique;
+using bud::unique_ptr;
 
 TEST_CASE("Construct empty unique_ptr", "[construct_empty_unique_ptr]")
 {
@@ -128,4 +128,15 @@ TEST_CASE("make_unique", "[make_unique]")
 	auto x(make_unique<int>(0));
 
 	REQUIRE(*x == 0);
+}
+
+TEST_CASE("null unique_ptr", "[null_unique_ptr]")
+{
+    unique_ptr<int> x(new int(3));  
+
+    unique_ptr<int> y = nullptr;
+
+    x = std::move(y);
+
+	REQUIRE(x == nullptr);
 }
