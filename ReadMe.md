@@ -1,1 +1,1 @@
-A simple implementation of vector, forward_list, unique_ptr and shared_ptr.
+A simple implementation of some data structures from the stl.
