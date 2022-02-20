@@ -7,7 +7,6 @@
 #include <iostream>
 
 #include "iterator.h"
-#include "../include/core.h"
 
 namespace simple
 {
@@ -15,7 +14,7 @@ namespace simple
 class string
 {
 	constexpr static std::size_t CAPACITY_INCREASE_FACTOR = 2;
-	constexpr static std::size_t STARTING_CAPACITY = MAX_WORD_LENGTH;
+	constexpr static std::size_t STARTING_CAPACITY = 8;
 
 public:
 	using size_type = std::size_t;

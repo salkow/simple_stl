@@ -19,15 +19,13 @@ add_compile_options(-Wall -Wextra -Wpedantic
          -Wstrict-overflow=2 -Wswitch-default -Wundef -Wno-unused
 		 -g -O0)
 	 
-file(GLOB_RECURSE TEST_SOURCES tests/*.cpp)
+file(GLOB_RECURSE TEST_SOURCES tests/*.cpp src/*.cpp)
 
 set(TEST_TARGET "run_tests")
 
-file(GLOB_RECURSE TEST_SOURCES tests/*.cpp)
-
 find_package(Catch2 REQUIRED PATHS "${PROJECT_SOURCE_DIR}/lib")
 
-add_executable(${TEST_TARGET} ${NO_MAIN_SOURCES} ${TEST_SOURCES})
+add_executable(${TEST_TARGET} ${TEST_SOURCES})
 target_link_libraries(${TEST_TARGET} PRIVATE Catch2::Catch2)
 
 include(CTest)

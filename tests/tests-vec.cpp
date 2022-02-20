@@ -3,8 +3,8 @@
 #include "../src/vector.h"
 #include "../src/my_string.h"
 
-using bud::string;
-using bud::vector;
+using simple::string;
+using simple::vector;
 
 TEST_CASE("Check if a new vector is empty.", "[empty_vector]")
 {
@@ -180,7 +180,7 @@ TEST_CASE("Copy vector")
 
 TEST_CASE("Erase element vector", "[erase_element_vector]")
 {
-	vector<bud::string> vec_1;
+	vector<simple::string> vec_1;
 	vec_1.emplace_back("1");
 	vec_1.emplace_back("2");
 	vec_1.emplace_back("3");

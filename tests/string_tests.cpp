@@ -1,7 +1,7 @@
 #include "../lib/include/catch2/catch.hpp"
 #include "../src/my_string.h"
 
-using bud::string;
+using simple::string;
 
 TEST_CASE("Fill a string", "[fill_string]")
 {

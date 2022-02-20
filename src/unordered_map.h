@@ -5,7 +5,6 @@
 #include <cassert>
 
 #include "vector.h"
-#include "../include/core.h"
 #include "pair.h"
 #include "hash_function.h"
 #include "util.h"
@@ -164,7 +163,7 @@ public:
 		const vector<value_type>* bucket_with_key = &(m_buckets[index]);
 
 		auto it =
-			find_if(bucket_with_key->begin(), bucket_with_key->end(),
+			simple::find_if(bucket_with_key->begin(), bucket_with_key->end(),
 					[&key](const value_type& item) { return compare_values(item.first, key); });
 
 		if (it == bucket_with_key->end())
@@ -192,7 +191,7 @@ public:
 		vector<value_type>* bucket_with_key = &(m_buckets[index]);
 
 		auto it =
-			find_if(bucket_with_key->begin(), bucket_with_key->end(),
+			simple::find_if(bucket_with_key->begin(), bucket_with_key->end(),
 					[&key](const value_type& item) { return compare_values(item.first, key); });
 
 		if (it == bucket_with_key->end())
@@ -252,7 +251,7 @@ private:
 		vector<value_type>* bucket_with_key = &(m_buckets[index]);
 
 		auto it =
-			find_if(bucket_with_key->begin(), bucket_with_key->end(),
+			simple::find_if(bucket_with_key->begin(), bucket_with_key->end(),
 					[&key](const value_type& item) { return compare_values(item.first, key); });
 
 		if (it != bucket_with_key->end())

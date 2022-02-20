@@ -3,8 +3,8 @@
 
 #include <utility>
 
-using bud::make_unique;
-using bud::unique_ptr;
+using simple::make_unique;
+using simple::unique_ptr;
 
 TEST_CASE("Construct empty unique_ptr", "[construct_empty_unique_ptr]")
 {

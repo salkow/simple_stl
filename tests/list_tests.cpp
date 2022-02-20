@@ -4,15 +4,15 @@
 #include "../src/list.h"
 #include "../src/my_string.h"
 
-using bud::list;
-using bud::string;
+using simple::list;
+using simple::string;
 
 #include <iostream>
 
 template <class T, class... Params>
 void check_list_iterators(const list<T>& t_list, Params... t_params)
 {
-	bud::array<T, sizeof...(t_params)> params = {t_params...};
+	simple::array<T, sizeof...(t_params)> params = {t_params...};
 
 	auto list_it = t_list.begin();
 	auto param_it = params.begin();

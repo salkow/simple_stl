@@ -3,9 +3,9 @@
 #include "../src/unordered_set.h"
 #include "../src/my_string.h"
 
-using bud::pair;
-using bud::string;
-using bud::unordered_set;
+using simple::pair;
+using simple::string;
+using simple::unordered_set;
 
 TEST_CASE("Search for items in empty set.", "[search_in_empty_set]")
 {
@@ -233,28 +233,28 @@ TEST_CASE("unordered_set iterators", "[unordered_set_iterators]")
 
 	REQUIRE(my_set.size() == 6);
 
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 1) != my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 2) != my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 3) != my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 4) != my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 5) != my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 6) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 1) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 2) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 3) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 4) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 5) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 6) != my_set.end());
 
 	my_set.insert(7);
 	REQUIRE(my_set.size() == 7);
 
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 1) != my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 2) != my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 3) != my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 4) != my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 5) != my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 6) != my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 7) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 1) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 2) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 3) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 4) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 5) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 6) != my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 7) != my_set.end());
 
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 8) == my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 9) == my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 10) == my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 11) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 8) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 9) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 10) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 11) == my_set.end());
 
 	unordered_set<int> my_other_set;
 	REQUIRE(my_other_set.begin() == my_other_set.end());
@@ -279,15 +279,15 @@ TEST_CASE("Unordered_set merge", "[unordered_set_merge]")
 
 	first_set.merge(std::move(second_set));
 
-	REQUIRE(bud::find(first_set.begin(), first_set.end(), 1) != first_set.end());
-	REQUIRE(bud::find(first_set.begin(), first_set.end(), 2) != first_set.end());
-	REQUIRE(bud::find(first_set.begin(), first_set.end(), 3) != first_set.end());
-	REQUIRE(bud::find(first_set.begin(), first_set.end(), 4) != first_set.end());
-	REQUIRE(bud::find(first_set.begin(), first_set.end(), 5) != first_set.end());
-	REQUIRE(bud::find(first_set.begin(), first_set.end(), 6) != first_set.end());
-	REQUIRE(bud::find(first_set.begin(), first_set.end(), 7) != first_set.end());
-	REQUIRE(bud::find(first_set.begin(), first_set.end(), 8) != first_set.end());
-	REQUIRE(bud::find(first_set.begin(), first_set.end(), 9) != first_set.end());
+	REQUIRE(simple::find(first_set.begin(), first_set.end(), 1) != first_set.end());
+	REQUIRE(simple::find(first_set.begin(), first_set.end(), 2) != first_set.end());
+	REQUIRE(simple::find(first_set.begin(), first_set.end(), 3) != first_set.end());
+	REQUIRE(simple::find(first_set.begin(), first_set.end(), 4) != first_set.end());
+	REQUIRE(simple::find(first_set.begin(), first_set.end(), 5) != first_set.end());
+	REQUIRE(simple::find(first_set.begin(), first_set.end(), 6) != first_set.end());
+	REQUIRE(simple::find(first_set.begin(), first_set.end(), 7) != first_set.end());
+	REQUIRE(simple::find(first_set.begin(), first_set.end(), 8) != first_set.end());
+	REQUIRE(simple::find(first_set.begin(), first_set.end(), 9) != first_set.end());
 }
 
 TEST_CASE("Clear unordered_set", "clear_unordered_set")
@@ -305,13 +305,13 @@ TEST_CASE("Clear unordered_set", "clear_unordered_set")
 
 	REQUIRE(my_set.empty());
 
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 1) == my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 2) == my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 3) == my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 4) == my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 5) == my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 6) == my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 7) == my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 8) == my_set.end());
-	REQUIRE(bud::find(my_set.begin(), my_set.end(), 9) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 1) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 2) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 3) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 4) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 5) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 6) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 7) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 8) == my_set.end());
+	REQUIRE(simple::find(my_set.begin(), my_set.end(), 9) == my_set.end());
 }

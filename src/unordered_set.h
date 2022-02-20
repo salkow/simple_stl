@@ -1,12 +1,12 @@
 #ifndef UNORDERED_SET_H
 #define UNORDERED_SET_H
 
+#include <algorithm>
 #include <cstddef>
 #include <cassert>
 #include <utility>
 
 #include "vector.h"
-#include "../include/core.h"
 #include "pair.h"
 #include "hash_function.h"
 #include "util.h"
@@ -162,7 +162,7 @@ public:
 
 		const vector<Key>* bucket_with_key = &(m_buckets[index]);
 
-		auto it = find_if(bucket_with_key->begin(), bucket_with_key->end(),
+		auto it = simple::find_if(bucket_with_key->begin(), bucket_with_key->end(),
 						  [&key](const key_type& item) { return compare_values(item, key); });
 
 		if (it == bucket_with_key->end())
@@ -188,7 +188,7 @@ public:
 
 		vector<Key>* bucket_with_key = &(m_buckets[index]);
 
-		auto it = find_if(bucket_with_key->begin(), bucket_with_key->end(),
+		auto it = simple::find_if(bucket_with_key->begin(), bucket_with_key->end(),
 						  [&key](const key_type& item) { return compare_values(item, key); });
 
 		if (it == bucket_with_key->end())
@@ -259,7 +259,7 @@ private:
 
 		vector<Key>* bucket_with_key = &(m_buckets[index]);
 
-		auto it = find_if(bucket_with_key->begin(), bucket_with_key->end(),
+		auto it = simple::find_if(bucket_with_key->begin(), bucket_with_key->end(),
 						  [&key](const key_type& item) { return compare_values(item, key); });
 
 		if (it != bucket_with_key->end())

@@ -1,11 +1,10 @@
 #include "../lib/include/catch2/catch.hpp"
 
 #include "../src/unordered_map.h"
-#include "../src/my_string.h"
 
-using bud::pair;
-using bud::string;
-using bud::unordered_map;
+using simple::pair;
+using simple::string;
+using simple::unordered_map;
 
 TEST_CASE("Search for items in empty map.", "[search_in_empty_map]")
 {
@@ -259,7 +258,7 @@ TEST_CASE("unordered_map iterators", "[unordered_map_iterators]")
 		auto check_if_equal_pair = [&value](const pair<const int, char> pair_to_check)
 		{ return pair_to_check.first == value.first && pair_to_check.second == value.second; };
 
-		REQUIRE(bud::find_if(my_map.begin(), my_map.end(), check_if_equal_pair) != my_map.end());
+		REQUIRE(simple::find_if(my_map.begin(), my_map.end(), check_if_equal_pair) != my_map.end());
 	}
 
 	unordered_map<int, char> my_other_set;

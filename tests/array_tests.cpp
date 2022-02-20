@@ -1,7 +1,7 @@
 #include "../lib/include/catch2/catch.hpp"
 #include "../src/array.h"
 
-using bud::array;
+using simple::array;
 
 TEST_CASE("Empty array", "[empty_array")
 {
